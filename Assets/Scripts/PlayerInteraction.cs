@@ -13,6 +13,7 @@ public class PlayerInteraction : MonoBehaviour
     private IInteractable currentInteractable;
     private Camera playerCamera;
     private bool interactionEnabled = true;
+    private bool isShowingPrompt = false;
 
     private void Start()
     {
@@ -68,6 +69,34 @@ public class PlayerInteraction : MonoBehaviour
         if (currentInteractable != interactable)
         {
             currentInteractable = interactable;
+
+            if (currentInteractable != null)
+            {
+                ShowInteractionPrompt();
+            }
+            else
+            {
+                HideInteractionPrompt();
+            }
+        }
+    }
+
+    private void ShowInteractionPrompt()
+    {
+        if (InteractionPromptUI.Instance != null && !isShowingPrompt)
+        {
+            string promptMessage = currentInteractable?.GetInteractionPrompt();
+            InteractionPromptUI.Instance.ShowPrompt(promptMessage);
+            isShowingPrompt = true;
+        }
+    }
+
+    private void HideInteractionPrompt()
+    {
+        if (InteractionPromptUI.Instance != null && isShowingPrompt)
+        {
+            InteractionPromptUI.Instance.HidePrompt();
+            isShowingPrompt = false;
         }
     }
 

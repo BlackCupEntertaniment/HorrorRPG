@@ -23,6 +23,9 @@ public class DialogueSystem : MonoBehaviour
     private bool isTyping;
     private bool isDialogueActive;
     private Coroutine typingCoroutine;
+    
+    private bool currentFastText;
+    private bool currentStuckDialogue;
 
     private void Awake()
     {
@@ -68,21 +71,14 @@ public class DialogueSystem : MonoBehaviour
             return;
         }
 
+        currentFastText = fastTextOverride.HasValue ? fastTextOverride.Value : fastText;
+        currentStuckDialogue = stuckOverride.HasValue ? stuckOverride.Value : stuckDialogue;
+
         currentSentences = dialogueData.sentences;
         currentSentenceIndex = 0;
         isDialogueActive = true;
 
-        if (stuckOverride.HasValue)
-        {
-            stuckDialogue = stuckOverride.Value;
-        }
-
-        if (fastTextOverride.HasValue)
-        {
-            fastText = fastTextOverride.Value;
-        }
-
-        if (stuckDialogue)
+        if (currentStuckDialogue)
         {
             SetPlayerControlEnabled(false);
         }
@@ -99,7 +95,7 @@ public class DialogueSystem : MonoBehaviour
     {
         StopTyping();
 
-        if (fastText)
+        if (currentFastText)
         {
             dialogueText.text = sentence;
             isTyping = false;
@@ -148,7 +144,7 @@ public class DialogueSystem : MonoBehaviour
             dialogueBox.SetActive(false);
         }
 
-        if (stuckDialogue)
+        if (currentStuckDialogue)
         {
             SetPlayerControlEnabled(true);
         }

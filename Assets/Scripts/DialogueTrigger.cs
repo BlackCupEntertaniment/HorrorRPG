@@ -4,7 +4,6 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 {
     [Header("Dialogue Settings")]
     [SerializeField] private DialogueData dialogueData;
-    [SerializeField] private string interactionPrompt = "Press E to talk";
 
     [Header("Dialogue Options")]
     [SerializeField] private bool stuckDialogue = false;
@@ -36,7 +35,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
     public string GetInteractionPrompt()
     {
-        return interactionPrompt;
+        return "Pressione E para interagir";
     }
 
     public bool CanInteract()
