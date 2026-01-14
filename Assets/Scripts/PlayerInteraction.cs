@@ -12,6 +12,7 @@ public class PlayerInteraction : MonoBehaviour
     
     private IInteractable currentInteractable;
     private Camera playerCamera;
+    private bool interactionEnabled = true;
 
     private void Start()
     {
@@ -25,8 +26,15 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        CheckForInteractable();
-        HandleInteractionInput();
+        if (interactionEnabled)
+        {
+            CheckForInteractable();
+            HandleInteractionInput();
+        }
+        else
+        {
+            SetCurrentInteractable(null);
+        }
     }
 
     private void CheckForInteractable()
@@ -71,6 +79,11 @@ public class PlayerInteraction : MonoBehaviour
     public string GetInteractionPrompt()
     {
         return currentInteractable?.GetInteractionPrompt();
+    }
+
+    public void SetInteractionEnabled(bool enabled)
+    {
+        interactionEnabled = enabled;
     }
 
     private void OnDrawGizmos()

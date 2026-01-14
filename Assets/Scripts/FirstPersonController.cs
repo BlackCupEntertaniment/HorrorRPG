@@ -13,6 +13,7 @@ public class FirstPersonController : MonoBehaviour
     
     private CharacterController characterController;
     private float verticalVelocity;
+    private bool controlEnabled = true;
     
     private void Awake()
     {
@@ -36,8 +37,11 @@ public class FirstPersonController : MonoBehaviour
     
     private void Update()
     {
-        HandleMovement();
-        HandleRotation();
+        if (controlEnabled)
+        {
+            HandleMovement();
+            HandleRotation();
+        }
     }
     
     private void HandleMovement()
@@ -67,5 +71,10 @@ public class FirstPersonController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X");
         float horizontalRotation = mouseX * lookSensitivity;
         transform.Rotate(Vector3.up * horizontalRotation);
+    }
+
+    public void SetControlEnabled(bool enabled)
+    {
+        controlEnabled = enabled;
     }
 }
