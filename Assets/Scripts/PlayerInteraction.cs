@@ -1,0 +1,84 @@
+using UnityEngine;
+
+public class PlayerInteraction : MonoBehaviour
+{
+    [Header("Interaction Settings")]
+    [SerializeField] private float interactionRange = 2f;
+    [SerializeField] private LayerMask interactableLayer = ~0;
+    [SerializeField] private KeyCode interactionKey = KeyCode.E;
+    
+    [Header("Raycast Settings")]
+    [SerializeField] private Transform raycastOrigin;
+    
+    private IInteractable currentInteractable;
+    private Camera playerCamera;
+
+    private void Start()
+    {
+        playerCamera = Camera.main;
+        
+        if (raycastOrigin == null)
+        {
+            raycastOrigin = playerCamera.transform;
+        }
+    }
+
+    private void Update()
+    {
+        CheckForInteractable();
+        HandleInteractionInput();
+    }
+
+    private void CheckForInteractable()
+    {
+        Ray ray = new Ray(raycastOrigin.position, raycastOrigin.forward);
+        
+        if (Physics.Raycast(ray, out RaycastHit hit, interactionRange, interactableLayer))
+        {
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            
+            if (interactable != null && interactable.CanInteract())
+            {
+                SetCurrentInteractable(interactable);
+                return;
+            }
+        }
+        
+        SetCurrentInteractable(null);
+    }
+
+    private void HandleInteractionInput()
+    {
+        if (Input.GetKeyDown(interactionKey) && currentInteractable != null)
+        {
+            currentInteractable.Interact();
+        }
+    }
+
+    private void SetCurrentInteractable(IInteractable interactable)
+    {
+        if (currentInteractable != interactable)
+        {
+            currentInteractable = interactable;
+        }
+    }
+
+    public IInteractable GetCurrentInteractable()
+    {
+        return currentInteractable;
+    }
+
+    public string GetInteractionPrompt()
+    {
+        return currentInteractable?.GetInteractionPrompt();
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (raycastOrigin != null)
+        {
+            Gizmos.color = currentInteractable != null ? Color.green : Color.red;
+            Gizmos.DrawRay(raycastOrigin.position, raycastOrigin.forward * interactionRange);
+        }
+    }
+}
