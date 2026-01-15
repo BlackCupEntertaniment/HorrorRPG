@@ -66,7 +66,7 @@ public class InteractionPromptUI : MonoBehaviour
     private IEnumerator AutoHideAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        HidePrompt();
+        HidePrompt(true);
         autoHideCoroutine = null;
     }
 
