@@ -10,6 +10,8 @@ public class ItemInteraction : MonoBehaviour, IInteractable
     [SerializeField] private bool canBePickedUp = true;
     [SerializeField] private string customPrompt = "";
 
+    private const float MESSAGE_DISPLAY_DURATION = 2f;
+
     public void Interact()
     {
         if (!CanInteract())
@@ -17,8 +19,38 @@ public class ItemInteraction : MonoBehaviour, IInteractable
 
         if (InventoryManager.Instance != null && itemData != null)
         {
-            InventoryManager.Instance.AddItem(itemData, quantity);
-            Destroy(gameObject);
+            int addedQuantity = InventoryManager.Instance.AddItem(itemData, quantity);
+
+            if (addedQuantity == 0)
+            {
+                if (InteractionPromptUI.Instance != null)
+                {
+                    InteractionPromptUI.Instance.ShowPrompt("Não foi possível pegar o item, Inventario cheio");
+                    Invoke(nameof(HidePrompt), MESSAGE_DISPLAY_DURATION);
+                }
+            }
+            else if (addedQuantity < quantity)
+            {
+                quantity -= addedQuantity;
+
+                if (InteractionPromptUI.Instance != null)
+                {
+                    InteractionPromptUI.Instance.ShowPrompt("Não foi possível pegar todos os itens, o inventario está cheio");
+                    Invoke(nameof(HidePrompt), MESSAGE_DISPLAY_DURATION);
+                }
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    private void HidePrompt()
+    {
+        if (InteractionPromptUI.Instance != null)
+        {
+            InteractionPromptUI.Instance.HidePrompt();
         }
     }
 

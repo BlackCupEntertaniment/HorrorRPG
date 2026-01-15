@@ -5462,7 +5462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: f03d72cad7ca6154490d67b3da3a3d7f, type: 2}
-  quantity: 3
+  quantity: 20
   canBePickedUp: 1
   customPrompt: 
 --- !u!1 &2036015256

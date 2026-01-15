@@ -141,7 +141,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void AddItem(ItemData itemData, int quantity = 1)
+    public int AddItem(ItemData itemData, int quantity = 1)
     {
         int remainingQuantity = quantity;
 
@@ -155,6 +155,11 @@ public class InventoryManager : MonoBehaviour
             }
             else
             {
+                if (inventorySlots.Count >= maxSlots)
+                {
+                    break;
+                }
+
                 int quantityToAdd = Mathf.Min(remainingQuantity, itemData.maxStackSize);
                 inventorySlots.Add(new InventorySlot(itemData, quantityToAdd));
                 remainingQuantity -= quantityToAdd;
@@ -165,6 +170,8 @@ public class InventoryManager : MonoBehaviour
         {
             RefreshInventoryUI();
         }
+
+        return quantity - remainingQuantity;
     }
 
     private void RefreshInventoryUI()
