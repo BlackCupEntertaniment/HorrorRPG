@@ -355,6 +355,7 @@ public class InventoryManager : MonoBehaviour
 
         if (discardConfirmationMenu != null)
         {
+            discardConfirmationMenu.gameObject.SetActive(true);
             discardConfirmationMenu.Show(OnDiscardConfirmed, OnDiscardCancelled);
         }
     }

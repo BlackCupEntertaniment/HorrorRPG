@@ -15,7 +15,7 @@ public class ConfirmationMenu : MonoBehaviour
     private void Awake()
     {
         buttons = new SelectableButton[] { cancelButton, confirmButton };
-        Hide();
+        //Hide();
     }
 
     public void Show(Action confirmCallback, Action cancelCallback)
@@ -23,7 +23,6 @@ public class ConfirmationMenu : MonoBehaviour
         onConfirm = confirmCallback;
         onCancel = cancelCallback;
         
-        gameObject.SetActive(true);
         currentSelectedIndex = 0;
         SelectButton(currentSelectedIndex);
     }
@@ -59,7 +58,7 @@ public class ConfirmationMenu : MonoBehaviour
             SelectButton(currentSelectedIndex);
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.E))
         {
             ExecuteCurrentButton();
         }
@@ -71,7 +70,10 @@ public class ConfirmationMenu : MonoBehaviour
         {
             currentlySelectedButton.SetSelected(false);
         }
-
+        if (buttons == null ||  buttons.Length <= 0)
+        {
+            buttons = new SelectableButton[] { cancelButton, confirmButton };
+        }
         currentlySelectedButton = buttons[index];
         currentlySelectedButton.SetSelected(true);
     }
