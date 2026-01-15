@@ -25,6 +25,7 @@ public class InventoryManager : MonoBehaviour
     private List<ItemSlotUI> slotUIList = new List<ItemSlotUI>();
     private ItemSlotUI currentlySelectedSlot;
     private bool isInventoryOpen = false;
+    private int currentSelectedIndex = -1;
 
     private void Awake()
     {
@@ -80,6 +81,11 @@ public class InventoryManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleInventory();
+        }
+
+        if (isInventoryOpen)
+        {
+            HandleInventoryNavigation();
         }
     }
 
@@ -156,6 +162,11 @@ public class InventoryManager : MonoBehaviour
         }
 
         ClearItemDisplay();
+
+        if (isInventoryOpen && inventorySlots.Count > 0)
+        {
+            SelectSlotByIndex(0);
+        }
     }
 
     public void SelectSlot(ItemSlotUI selectedSlot)
@@ -168,7 +179,52 @@ public class InventoryManager : MonoBehaviour
         currentlySelectedSlot = selectedSlot;
         currentlySelectedSlot.SetSelected(true);
 
+        currentSelectedIndex = slotUIList.IndexOf(selectedSlot);
+
         DisplayItemDetails(selectedSlot.GetSlot());
+    }
+
+    private void SelectSlotByIndex(int index)
+    {
+        if (index < 0 || index >= inventorySlots.Count)
+        {
+            return;
+        }
+
+        if (index < slotUIList.Count && slotUIList[index].GetSlot() != null)
+        {
+            SelectSlot(slotUIList[index]);
+        }
+    }
+
+    private void HandleInventoryNavigation()
+    {
+        if (inventorySlots.Count == 0)
+        {
+            return;
+        }
+
+        bool moveDown = Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S);
+        bool moveUp = Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W);
+
+        if (moveDown)
+        {
+            int nextIndex = currentSelectedIndex + 1;
+            if (nextIndex >= inventorySlots.Count)
+            {
+                nextIndex = 0;
+            }
+            SelectSlotByIndex(nextIndex);
+        }
+        else if (moveUp)
+        {
+            int previousIndex = currentSelectedIndex - 1;
+            if (previousIndex < 0)
+            {
+                previousIndex = inventorySlots.Count - 1;
+            }
+            SelectSlotByIndex(previousIndex);
+        }
     }
 
     private void DisplayItemDetails(InventorySlot slot)
