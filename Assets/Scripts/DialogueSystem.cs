@@ -243,11 +243,6 @@ public class DialogueSystem : MonoBehaviour
         isConfirmationMenuOpen = true;
         isDialogueActive = false;
 
-        if (dialogueBox != null)
-        {
-            dialogueBox.SetActive(false);
-        }
-
         if (PlayerControlManager.Instance != null)
         {
             PlayerControlManager.Instance.LockControl(CONFIRMATION_LOCK_ID);
@@ -268,6 +263,7 @@ public class DialogueSystem : MonoBehaviour
     {
         CloseConfirmationMenu();
         onConfirmCallback?.Invoke();
+        EndDialogue();
         ResetDialogueState();
     }
 
@@ -275,6 +271,7 @@ public class DialogueSystem : MonoBehaviour
     {
         CloseConfirmationMenu();
         onCancelCallback?.Invoke();
+        EndDialogue();
         ResetDialogueState();
     }
 
@@ -295,11 +292,6 @@ public class DialogueSystem : MonoBehaviour
         if (PlayerControlManager.Instance != null)
         {
             PlayerControlManager.Instance.UnlockControl(CONFIRMATION_LOCK_ID);
-        }
-
-        if (currentStuckDialogue && PlayerControlManager.Instance != null)
-        {
-            PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
         }
     }
 
