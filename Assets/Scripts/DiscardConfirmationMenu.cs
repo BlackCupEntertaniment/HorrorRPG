@@ -15,6 +15,7 @@ public class DiscardConfirmationMenu : MonoBehaviour
     private void Awake()
     {
         buttons = new SelectableButton[] { cancelButton, confirmButton };
+        Hide();
     }
 
     public void Show(Action confirmCallback, Action cancelCallback)

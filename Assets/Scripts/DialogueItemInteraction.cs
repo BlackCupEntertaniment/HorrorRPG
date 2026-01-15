@@ -48,7 +48,37 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
         }
 
         isWaitingForDialogue = false;
+
+        if (canBePickedUp && itemData != null)
+        {
+            ShowItemConfirmation();
+        }
+    }
+
+    private void ShowItemConfirmation()
+    {
+        string confirmationMessage = $"Você quer adicionar {quantity}x {itemData.itemName} ao seu inventário?";
+        
+        DialogueSystem.Instance.StartDialogueWithConfirmation(
+            confirmationMessage,
+            OnItemConfirmed,
+            OnItemCancelled,
+            stuckDialogue,
+            fastText
+        );
+    }
+
+    private void OnItemConfirmed()
+    {
         CollectItems();
+    }
+
+    private void OnItemCancelled()
+    {
+        if (oneTimeOnly)
+        {
+            hasInteracted = true;
+        }
     }
 
     private void CollectItems()

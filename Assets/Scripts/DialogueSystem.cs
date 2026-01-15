@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using TMPro;
@@ -18,7 +19,12 @@ public class DialogueSystem : MonoBehaviour
     [SerializeField] private bool stuckDialogue = false;
     [SerializeField] private KeyCode skipKey = KeyCode.Space;
 
+    [Header("Confirmation Settings")]
+    [SerializeField] private GameObject confirmationBackground;
+    [SerializeField] private DiscardConfirmationMenu confirmationMenu;
+
     private const string CONTROL_LOCK_ID = "DialogueSystem";
+    private const string CONFIRMATION_LOCK_ID = "DialogueConfirmation";
 
     private string[] currentSentences;
     private int currentSentenceIndex;
@@ -28,6 +34,11 @@ public class DialogueSystem : MonoBehaviour
     
     private bool currentFastText;
     private bool currentStuckDialogue;
+    private bool currentRequiresConfirmation;
+    private bool isConfirmationMenuOpen;
+
+    private Action onConfirmCallback;
+    private Action onCancelCallback;
 
     private void Awake()
     {
@@ -51,6 +62,12 @@ public class DialogueSystem : MonoBehaviour
 
     private void Update()
     {
+        if (isConfirmationMenuOpen && confirmationMenu != null)
+        {
+            confirmationMenu.HandleNavigation();
+            return;
+        }
+
         if (isDialogueActive && Input.GetKeyDown(skipKey))
         {
             if (isTyping)
@@ -75,10 +92,40 @@ public class DialogueSystem : MonoBehaviour
 
         currentFastText = fastTextOverride.HasValue ? fastTextOverride.Value : fastText;
         currentStuckDialogue = stuckOverride.HasValue ? stuckOverride.Value : stuckDialogue;
+        currentRequiresConfirmation = dialogueData.requiresConfirmation;
 
         currentSentences = dialogueData.sentences;
         currentSentenceIndex = 0;
         isDialogueActive = true;
+
+        onConfirmCallback = null;
+        onCancelCallback = null;
+
+        if (currentStuckDialogue && PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
+        }
+
+        if (dialogueBox != null)
+        {
+            dialogueBox.SetActive(true);
+        }
+
+        DisplaySentence(currentSentences[currentSentenceIndex]);
+    }
+
+    public void StartDialogueWithConfirmation(string message, Action onConfirm, Action onCancel, bool? stuckOverride = null, bool? fastTextOverride = null)
+    {
+        currentFastText = fastTextOverride.HasValue ? fastTextOverride.Value : fastText;
+        currentStuckDialogue = stuckOverride.HasValue ? stuckOverride.Value : stuckDialogue;
+        currentRequiresConfirmation = true;
+
+        currentSentences = new string[] { message };
+        currentSentenceIndex = 0;
+        isDialogueActive = true;
+
+        onConfirmCallback = onConfirm;
+        onCancelCallback = onCancel;
 
         if (currentStuckDialogue && PlayerControlManager.Instance != null)
         {
@@ -132,7 +179,14 @@ public class DialogueSystem : MonoBehaviour
         }
         else
         {
-            EndDialogue();
+            if (currentRequiresConfirmation)
+            {
+                ShowConfirmationMenu();
+            }
+            else
+            {
+                EndDialogue();
+            }
         }
     }
 
@@ -182,5 +236,79 @@ public class DialogueSystem : MonoBehaviour
     public void SetTypingSpeed(float speed)
     {
         typingSpeed = speed;
+    }
+
+    private void ShowConfirmationMenu()
+    {
+        isConfirmationMenuOpen = true;
+        isDialogueActive = false;
+
+        if (dialogueBox != null)
+        {
+            dialogueBox.SetActive(false);
+        }
+
+        if (PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.LockControl(CONFIRMATION_LOCK_ID);
+        }
+
+        if (confirmationBackground != null)
+        {
+            confirmationBackground.SetActive(true);
+        }
+
+        if (confirmationMenu != null)
+        {
+            confirmationMenu.Show(OnConfirmationAccepted, OnConfirmationCancelled);
+        }
+    }
+
+    private void OnConfirmationAccepted()
+    {
+        CloseConfirmationMenu();
+        onConfirmCallback?.Invoke();
+        ResetDialogueState();
+    }
+
+    private void OnConfirmationCancelled()
+    {
+        CloseConfirmationMenu();
+        onCancelCallback?.Invoke();
+        ResetDialogueState();
+    }
+
+    private void CloseConfirmationMenu()
+    {
+        isConfirmationMenuOpen = false;
+
+        if (confirmationMenu != null)
+        {
+            confirmationMenu.Hide();
+        }
+
+        if (confirmationBackground != null)
+        {
+            confirmationBackground.SetActive(false);
+        }
+
+        if (PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.UnlockControl(CONFIRMATION_LOCK_ID);
+        }
+
+        if (currentStuckDialogue && PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
+        }
+    }
+
+    private void ResetDialogueState()
+    {
+        currentSentences = null;
+        currentSentenceIndex = 0;
+        currentRequiresConfirmation = false;
+        onConfirmCallback = null;
+        onCancelCallback = null;
     }
 }
