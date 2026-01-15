@@ -80,4 +80,9 @@ public class ItemSlotUI : MonoBehaviour
     {
         return currentSlot;
     }
+
+    public int GetSlotIndex()
+    {
+        return inventoryManager != null ? inventoryManager.GetSlotIndex(this) : -1;
+    }
 }

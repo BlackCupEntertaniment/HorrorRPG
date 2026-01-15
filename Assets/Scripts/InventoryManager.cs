@@ -12,6 +12,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private Transform itemsGridParent;
     [SerializeField] private Image itemIconDisplay;
     [SerializeField] private TextMeshProUGUI itemDescriptionText;
+    [SerializeField] private DiscardConfirmationMenu discardConfirmationMenu;
 
     [Header("Prefab")]
     [SerializeField] private GameObject itemSlotPrefab;
@@ -20,12 +21,15 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private int maxSlots = 9;
 
     private const string CONTROL_LOCK_ID = "InventorySystem";
+    private const string DISCARD_CONFIRMATION_MESSAGE = "Tem certeza que deseja descartar este item?";
 
     private List<InventorySlot> inventorySlots = new List<InventorySlot>();
     private List<ItemSlotUI> slotUIList = new List<ItemSlotUI>();
     private ItemSlotUI currentlySelectedSlot;
     private bool isInventoryOpen = false;
     private int currentSelectedIndex = -1;
+    private bool isDiscardMenuOpen = false;
+    private string originalDescriptionText = "";
 
     private void Awake()
     {
@@ -42,6 +46,11 @@ public class InventoryManager : MonoBehaviour
         if (inventoryCanvas != null)
         {
             inventoryCanvas.SetActive(false);
+        }
+
+        if (discardConfirmationMenu != null)
+        {
+            discardConfirmationMenu.gameObject.SetActive(false);
         }
 
         FindOrCreateSlots();
@@ -85,7 +94,14 @@ public class InventoryManager : MonoBehaviour
 
         if (isInventoryOpen)
         {
-            HandleInventoryNavigation();
+            if (isDiscardMenuOpen)
+            {
+                HandleDiscardMenuNavigation();
+            }
+            else
+            {
+                HandleInventoryNavigation();
+            }
         }
     }
 
@@ -232,6 +248,80 @@ public class InventoryManager : MonoBehaviour
             }
             SelectSlotByIndex(previousIndex);
         }
+
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            OpenDiscardMenu();
+        }
+    }
+
+    private void HandleDiscardMenuNavigation()
+    {
+        if (discardConfirmationMenu != null)
+        {
+            discardConfirmationMenu.HandleNavigation();
+        }
+    }
+
+    private void OpenDiscardMenu()
+    {
+        if (currentlySelectedSlot == null || currentlySelectedSlot.GetSlot() == null)
+        {
+            return;
+        }
+
+        isDiscardMenuOpen = true;
+        originalDescriptionText = itemDescriptionText != null ? itemDescriptionText.text : "";
+
+        if (itemDescriptionText != null)
+        {
+            itemDescriptionText.text = DISCARD_CONFIRMATION_MESSAGE;
+        }
+
+        if (discardConfirmationMenu != null)
+        {
+            discardConfirmationMenu.Show(OnDiscardConfirmed, OnDiscardCancelled);
+        }
+    }
+
+    private void OnDiscardConfirmed()
+    {
+        if (currentlySelectedSlot != null)
+        {
+            int slotIndex = GetSlotIndex(currentlySelectedSlot);
+            if (slotIndex >= 0 && slotIndex < inventorySlots.Count)
+            {
+                inventorySlots.RemoveAt(slotIndex);
+            }
+        }
+
+        CloseDiscardMenu();
+        RefreshInventoryUI();
+    }
+
+    private void OnDiscardCancelled()
+    {
+        CloseDiscardMenu();
+        
+        if (currentlySelectedSlot != null)
+        {
+            DisplayItemDetails(currentlySelectedSlot.GetSlot());
+        }
+    }
+
+    private void CloseDiscardMenu()
+    {
+        isDiscardMenuOpen = false;
+
+        if (discardConfirmationMenu != null)
+        {
+            discardConfirmationMenu.Hide();
+        }
+    }
+
+    public int GetSlotIndex(ItemSlotUI slotUI)
+    {
+        return slotUIList.IndexOf(slotUI);
     }
 
     private void DisplayItemDetails(InventorySlot slot)
