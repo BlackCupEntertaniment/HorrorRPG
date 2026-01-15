@@ -1046,6 +1046,10 @@ MonoBehaviour:
   iconBackground: {fileID: 220864034}
   itemSlotPrefab: {fileID: 1253506846}
   maxSlots: 9
+  inventoryFullMessage: "N\xE3o foi poss\xEDvel pegar o item, Inventario cheio"
+  partialPickupMessage: "N\xE3o foi poss\xEDvel pegar todos os itens, o inventario
+    est\xE1 cheio"
+  promptDisplayDuration: 2
 --- !u!114 &392663689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5462,7 +5466,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: f03d72cad7ca6154490d67b3da3a3d7f, type: 2}
-  quantity: 20
+  quantity: 43
   canBePickedUp: 1
   customPrompt: 
 --- !u!1 &2036015256

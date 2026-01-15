@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using System.Collections;
 
 public class InteractionPromptUI : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class InteractionPromptUI : MonoBehaviour
     [SerializeField] private string defaultPromptMessage = "Pressione E para interagir";
 
     private bool isPromptActive = false;
+    private Coroutine autoHideCoroutine;
 
     private void Awake()
     {
@@ -36,6 +38,12 @@ public class InteractionPromptUI : MonoBehaviour
 
     public void ShowPrompt(string message = null)
     {
+        if (autoHideCoroutine != null)
+        {
+            StopCoroutine(autoHideCoroutine);
+            autoHideCoroutine = null;
+        }
+
         if (promptBox != null && promptText != null)
         {
             promptText.text = string.IsNullOrEmpty(message) ? defaultPromptMessage : message;
@@ -44,8 +52,32 @@ public class InteractionPromptUI : MonoBehaviour
         }
     }
 
+    public void ShowPromptWithDuration(string message, float duration)
+    {
+        if (autoHideCoroutine != null)
+        {
+            StopCoroutine(autoHideCoroutine);
+        }
+
+        ShowPrompt(message);
+        autoHideCoroutine = StartCoroutine(AutoHideAfterDelay(duration));
+    }
+
+    private IEnumerator AutoHideAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        HidePrompt();
+        autoHideCoroutine = null;
+    }
+
     public void HidePrompt()
     {
+        if (autoHideCoroutine != null)
+        {
+            StopCoroutine(autoHideCoroutine);
+            autoHideCoroutine = null;
+        }
+
         if (promptBox != null)
         {
             promptBox.SetActive(false);

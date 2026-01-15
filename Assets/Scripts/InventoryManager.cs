@@ -23,6 +23,11 @@ public class InventoryManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private int maxSlots = 9;
 
+    [Header("Prompt Messages")]
+    [SerializeField] private string inventoryFullMessage = "Não foi possível pegar o item, Inventario cheio";
+    [SerializeField] private string partialPickupMessage = "Não foi possível pegar todos os itens, o inventario está cheio";
+    [SerializeField] private float promptDisplayDuration = 2f;
+
     private const string CONTROL_LOCK_ID = "InventorySystem";
     private const string DISCARD_CONFIRMATION_MESSAGE = "Tem certeza que deseja descartar este item?";
 
@@ -171,7 +176,26 @@ public class InventoryManager : MonoBehaviour
             RefreshInventoryUI();
         }
 
-        return quantity - remainingQuantity;
+        int addedQuantity = quantity - remainingQuantity;
+
+        if (addedQuantity == 0)
+        {
+            ShowInventoryMessage(inventoryFullMessage);
+        }
+        else if (addedQuantity < quantity)
+        {
+            ShowInventoryMessage(partialPickupMessage);
+        }
+
+        return addedQuantity;
+    }
+
+    private void ShowInventoryMessage(string message)
+    {
+        if (InteractionPromptUI.Instance != null)
+        {
+            InteractionPromptUI.Instance.ShowPromptWithDuration(message, promptDisplayDuration);
+        }
     }
 
     private void RefreshInventoryUI()
