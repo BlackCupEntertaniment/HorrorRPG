@@ -30,12 +30,19 @@ public class InventorySlot
         return itemData == data && itemData.isStackable && quantity < itemData.maxStackSize;
     }
 
-    public void AddQuantity(int amount)
+    public int AddQuantity(int amount)
     {
-        quantity += amount;
-        if (quantity > itemData.maxStackSize)
+        int totalAmount = quantity + amount;
+        
+        if (totalAmount > itemData.maxStackSize)
         {
             quantity = itemData.maxStackSize;
+            return totalAmount - itemData.maxStackSize;
+        }
+        else
+        {
+            quantity = totalAmount;
+            return 0;
         }
     }
 }

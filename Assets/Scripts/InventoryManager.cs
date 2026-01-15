@@ -107,8 +107,8 @@ public class InventoryManager : MonoBehaviour
                 PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
             }
 
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            //Cursor.lockState = CursorLockMode.None;
+            //Cursor.visible = true;
         }
         else
         {
@@ -124,15 +124,22 @@ public class InventoryManager : MonoBehaviour
 
     public void AddItem(ItemData itemData, int quantity = 1)
     {
-        InventorySlot existingSlot = inventorySlots.Find(slot => slot.CanStack(itemData));
+        int remainingQuantity = quantity;
 
-        if (existingSlot != null)
+        while (remainingQuantity > 0)
         {
-            existingSlot.AddQuantity(quantity);
-        }
-        else
-        {
-            inventorySlots.Add(new InventorySlot(itemData, quantity));
+            InventorySlot existingSlot = inventorySlots.Find(slot => slot.CanStack(itemData));
+
+            if (existingSlot != null)
+            {
+                remainingQuantity = existingSlot.AddQuantity(remainingQuantity);
+            }
+            else
+            {
+                int quantityToAdd = Mathf.Min(remainingQuantity, itemData.maxStackSize);
+                inventorySlots.Add(new InventorySlot(itemData, quantityToAdd));
+                remainingQuantity -= quantityToAdd;
+            }
         }
 
         if (isInventoryOpen)
