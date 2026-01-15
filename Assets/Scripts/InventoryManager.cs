@@ -24,8 +24,8 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private int maxSlots = 9;
 
     [Header("Prompt Messages")]
-    [SerializeField] private string inventoryFullMessage = "Não foi possível pegar o item, Inventario cheio";
-    [SerializeField] private string partialPickupMessage = "Não foi possível pegar todos os itens, o inventario está cheio";
+    private const string inventoryFullMessage = "Inventario cheio";
+    private const string partialPickupMessage = "Alguns itens ficaram para trás";
     [SerializeField] private float promptDisplayDuration = 2f;
 
     private const string CONTROL_LOCK_ID = "InventorySystem";
@@ -184,7 +184,13 @@ public class InventoryManager : MonoBehaviour
         }
         else if (addedQuantity < quantity)
         {
-            ShowInventoryMessage(partialPickupMessage);
+            string message = $"Você pegou {addedQuantity} de {itemData.itemName}\n{partialPickupMessage}";
+            ShowInventoryMessage(message);
+        }
+        else
+        {
+            string message = $"Você pegou {addedQuantity} de {itemData.itemName}";
+            ShowInventoryMessage(message);
         }
 
         return addedQuantity;

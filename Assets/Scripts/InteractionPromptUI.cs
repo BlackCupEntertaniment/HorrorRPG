@@ -70,8 +70,13 @@ public class InteractionPromptUI : MonoBehaviour
         autoHideCoroutine = null;
     }
 
-    public void HidePrompt()
+    public void HidePrompt(bool force = false)
     {
+        if (!force && autoHideCoroutine != null)
+        {
+            return;
+        }
+
         if (autoHideCoroutine != null)
         {
             StopCoroutine(autoHideCoroutine);
@@ -88,5 +93,10 @@ public class InteractionPromptUI : MonoBehaviour
     public bool IsPromptActive()
     {
         return isPromptActive;
+    }
+
+    public bool HasActiveAutoHide()
+    {
+        return autoHideCoroutine != null;
     }
 }
