@@ -96,7 +96,7 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
 
                 if (quantity <= 0)
                 {
-                    Destroy(gameObject);
+                    canBePickedUp = false;
                 }
             }
         }

@@ -154,11 +154,11 @@ MonoBehaviour:
   dialogueData: {fileID: 11400000, guid: cb8577f246508d5418bc41ba916ca0aa, type: 2}
   stuckDialogue: 1
   fastText: 0
-  itemData: {fileID: 11400000, guid: 2d7514404df022e4793c18a2725a810a, type: 2}
-  quantity: 2
+  itemData: {fileID: 11400000, guid: f03d72cad7ca6154490d67b3da3a3d7f, type: 2}
+  quantity: 3
   canBePickedUp: 1
   customPrompt: 
-  oneTimeOnly: 1
+  oneTimeOnly: 0
 --- !u!23 &25120794
 MeshRenderer:
   m_ObjectHideFlags: 0
