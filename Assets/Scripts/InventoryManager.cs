@@ -13,6 +13,9 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private Image itemIconDisplay;
     [SerializeField] private TextMeshProUGUI itemDescriptionText;
     [SerializeField] private DiscardConfirmationMenu discardConfirmationMenu;
+    [SerializeField] private GameObject emptyMessageObject;
+    [SerializeField] private GameObject descriptionBackground;
+    [SerializeField] private GameObject iconBackground;
 
     [Header("Prefab")]
     [SerializeField] private GameObject itemSlotPrefab;
@@ -186,9 +189,44 @@ public class InventoryManager : MonoBehaviour
 
         ClearItemDisplay();
 
-        if (isInventoryOpen && inventorySlots.Count > 0)
+        if (inventorySlots.Count == 0)
         {
-            SelectSlotByIndex(0);
+            if (emptyMessageObject != null)
+            {
+                emptyMessageObject.SetActive(true);
+            }
+
+            if (descriptionBackground != null)
+            {
+                descriptionBackground.SetActive(false);
+            }
+
+            if (iconBackground != null)
+            {
+                iconBackground.SetActive(false);
+            }
+        }
+        else
+        {
+            if (emptyMessageObject != null)
+            {
+                emptyMessageObject.SetActive(false);
+            }
+
+            if (descriptionBackground != null)
+            {
+                descriptionBackground.SetActive(true);
+            }
+
+            if (iconBackground != null)
+            {
+                iconBackground.SetActive(true);
+            }
+
+            if (isInventoryOpen)
+            {
+                SelectSlotByIndex(0);
+            }
         }
     }
 
