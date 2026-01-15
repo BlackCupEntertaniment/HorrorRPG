@@ -19,6 +19,8 @@ public class InventoryManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private int maxSlots = 9;
 
+    private const string CONTROL_LOCK_ID = "InventorySystem";
+
     private List<InventorySlot> inventorySlots = new List<InventorySlot>();
     private List<ItemSlotUI> slotUIList = new List<ItemSlotUI>();
     private ItemSlotUI currentlySelectedSlot;
@@ -93,6 +95,24 @@ public class InventoryManager : MonoBehaviour
         if (isInventoryOpen)
         {
             RefreshInventoryUI();
+            
+            if (PlayerControlManager.Instance != null)
+            {
+                PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
+            }
+
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            if (PlayerControlManager.Instance != null)
+            {
+                PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
+            }
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 

@@ -18,6 +18,8 @@ public class DialogueSystem : MonoBehaviour
     [SerializeField] private bool stuckDialogue = false;
     [SerializeField] private KeyCode skipKey = KeyCode.Space;
 
+    private const string CONTROL_LOCK_ID = "DialogueSystem";
+
     private string[] currentSentences;
     private int currentSentenceIndex;
     private bool isTyping;
@@ -78,9 +80,9 @@ public class DialogueSystem : MonoBehaviour
         currentSentenceIndex = 0;
         isDialogueActive = true;
 
-        if (currentStuckDialogue)
+        if (currentStuckDialogue && PlayerControlManager.Instance != null)
         {
-            SetPlayerControlEnabled(false);
+            PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
         }
 
         if (dialogueBox != null)
@@ -144,9 +146,9 @@ public class DialogueSystem : MonoBehaviour
             dialogueBox.SetActive(false);
         }
 
-        if (currentStuckDialogue)
+        if (currentStuckDialogue && PlayerControlManager.Instance != null)
         {
-            SetPlayerControlEnabled(true);
+            PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
         }
 
         currentSentences = null;
@@ -159,21 +161,6 @@ public class DialogueSystem : MonoBehaviour
         {
             StopCoroutine(typingCoroutine);
             typingCoroutine = null;
-        }
-    }
-
-    private void SetPlayerControlEnabled(bool enabled)
-    {
-        FirstPersonController controller = Object.FindAnyObjectByType<FirstPersonController>();
-        if (controller != null)
-        {
-            controller.SetControlEnabled(enabled);
-        }
-
-        PlayerInteraction interaction = Object.FindAnyObjectByType<PlayerInteraction>();
-        if (interaction != null)
-        {
-            interaction.SetInteractionEnabled(enabled);
         }
     }
 
