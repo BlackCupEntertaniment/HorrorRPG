@@ -18,3 +18,6 @@ MonoBehaviour:
   - "Pressione SPACE para avan\xE7ar para a pr\xF3xima frase."
   - "Esta \xE9 a \xFAltima frase. Quando voc\xEA avan\xE7ar, o di\xE1logo ser\xE1
     fechado."
+  stuckDialogue: 1
+  fastText: 0
+  requiresConfirmation: 0

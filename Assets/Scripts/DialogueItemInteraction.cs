@@ -5,8 +5,6 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
 {
     [Header("Dialogue Settings")]
     [SerializeField] private DialogueData dialogueData;
-    [SerializeField] private bool stuckDialogue = false;
-    [SerializeField] private bool fastText = false;
 
     [Header("Item Configuration")]
     [SerializeField] private ItemData itemData;
@@ -27,7 +25,7 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
 
         if (DialogueSystem.Instance != null && dialogueData != null)
         {
-            DialogueSystem.Instance.StartDialogue(dialogueData, stuckDialogue, fastText);
+            DialogueSystem.Instance.StartDialogue(dialogueData);
             isWaitingForDialogue = true;
             StartCoroutine(WaitForDialogueEnd());
 
@@ -63,8 +61,7 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
             confirmationMessage,
             OnItemConfirmed,
             OnItemCancelled,
-            stuckDialogue,
-            fastText
+            dialogueData
         );
     }
 
@@ -130,11 +127,6 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
         }
 
         if (isWaitingForDialogue)
-        {
-            return false;
-        }
-
-        if (DialogueSystem.Instance != null && DialogueSystem.Instance.IsDialogueActive())
         {
             return false;
         }

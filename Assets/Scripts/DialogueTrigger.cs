@@ -5,10 +5,6 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
     [Header("Dialogue Settings")]
     [SerializeField] private DialogueData dialogueData;
 
-    [Header("Dialogue Options")]
-    [SerializeField] private bool stuckDialogue = false;
-    [SerializeField] private bool fastText = false;
-
     [Header("Trigger Settings")]
     [SerializeField] private bool canInteract = true;
     [SerializeField] private bool oneTimeOnly = false;
@@ -24,7 +20,7 @@ public class DialogueTrigger : MonoBehaviour, IInteractable
 
         if (DialogueSystem.Instance != null && dialogueData != null)
         {
-            DialogueSystem.Instance.StartDialogue(dialogueData, stuckDialogue, fastText);
+            DialogueSystem.Instance.StartDialogue(dialogueData);
             
             if (oneTimeOnly)
             {

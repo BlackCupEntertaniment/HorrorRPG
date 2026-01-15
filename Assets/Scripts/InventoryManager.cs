@@ -12,7 +12,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private Transform itemsGridParent;
     [SerializeField] private Image itemIconDisplay;
     [SerializeField] private TextMeshProUGUI itemDescriptionText;
-    [SerializeField] private DiscardConfirmationMenu discardConfirmationMenu;
+    [SerializeField] private ConfirmationMenu discardConfirmationMenu;
     [SerializeField] private GameObject emptyMessageObject;
     [SerializeField] private GameObject descriptionBackground;
     [SerializeField] private GameObject iconBackground;

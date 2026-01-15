@@ -21,7 +21,7 @@ public class DialogueSystem : MonoBehaviour
 
     [Header("Confirmation Settings")]
     [SerializeField] private GameObject confirmationBackground;
-    [SerializeField] private DiscardConfirmationMenu confirmationMenu;
+    [SerializeField] private ConfirmationMenu confirmationMenu;
 
     private const string CONTROL_LOCK_ID = "DialogueSystem";
     private const string CONFIRMATION_LOCK_ID = "DialogueConfirmation";
@@ -90,8 +90,8 @@ public class DialogueSystem : MonoBehaviour
             return;
         }
 
-        currentFastText = fastTextOverride.HasValue ? fastTextOverride.Value : fastText;
-        currentStuckDialogue = stuckOverride.HasValue ? stuckOverride.Value : stuckDialogue;
+        currentFastText = fastTextOverride.HasValue ? fastTextOverride.Value : dialogueData.fastText;
+        currentStuckDialogue = stuckOverride.HasValue ? stuckOverride.Value : dialogueData.stuckDialogue;
         currentRequiresConfirmation = dialogueData.requiresConfirmation;
 
         currentSentences = dialogueData.sentences;
@@ -114,10 +114,10 @@ public class DialogueSystem : MonoBehaviour
         DisplaySentence(currentSentences[currentSentenceIndex]);
     }
 
-    public void StartDialogueWithConfirmation(string message, Action onConfirm, Action onCancel, bool? stuckOverride = null, bool? fastTextOverride = null)
+    public void StartDialogueWithConfirmation(string message, Action onConfirm, Action onCancel, DialogueData dialogueData)
     {
-        currentFastText = fastTextOverride.HasValue ? fastTextOverride.Value : fastText;
-        currentStuckDialogue = stuckOverride.HasValue ? stuckOverride.Value : stuckDialogue;
+        currentFastText = dialogueData != null ? dialogueData.fastText : fastText;
+        currentStuckDialogue = dialogueData != null ? dialogueData.stuckDialogue : stuckDialogue;
         currentRequiresConfirmation = true;
 
         currentSentences = new string[] { message };

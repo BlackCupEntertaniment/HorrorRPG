@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class DiscardConfirmationMenu : MonoBehaviour
+public class ConfirmationMenu : MonoBehaviour
 {
     [SerializeField] private SelectableButton confirmButton;
     [SerializeField] private SelectableButton cancelButton;
