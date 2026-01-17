@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 551f87845403174449b3f5906984cff5, type: 3}
-  m_Name: Battery
+  m_Name: Knife
   m_EditorClassIdentifier: 
-  itemName: Baterry
-  description: Attacks vampire like enemies
+  itemName: Knife
+  description: Effective against phisical enemies
   icon: {fileID: 21300000, guid: 4b9b64f46a21e384097b280a4c50923c, type: 3}
-  isStackable: 1
+  isStackable: 0
   maxStackSize: 10
