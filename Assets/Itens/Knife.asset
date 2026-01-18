@@ -15,6 +15,7 @@ MonoBehaviour:
   itemName: Knife
   description: Effective against phisical creatures
   icon: {fileID: 21300000, guid: 4b9b64f46a21e384097b280a4c50923c, type: 3}
+  category: 1
   isStackable: 0
   maxStackSize: 10
-  disposable: 1
+  disposable: 0

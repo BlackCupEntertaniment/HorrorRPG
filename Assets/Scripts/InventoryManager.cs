@@ -17,6 +17,10 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private GameObject descriptionBackground;
     [SerializeField] private GameObject iconBackground;
 
+    [Header("Tabs")]
+    [SerializeField] private Transform tabsParent;
+    [SerializeField] private GameObject tabPrefab;
+
     [Header("Prefab")]
     [SerializeField] private GameObject itemSlotPrefab;
 
@@ -38,6 +42,10 @@ public class InventoryManager : MonoBehaviour
     private int currentSelectedIndex = -1;
     private bool isDiscardMenuOpen = false;
     private string originalDescriptionText = "";
+
+    private List<InventoryTab> tabs = new List<InventoryTab>();
+    private int currentTabIndex = 0;
+    private ItemCategory currentCategory = ItemCategory.Consumable;
 
     private void Awake()
     {
@@ -61,6 +69,7 @@ public class InventoryManager : MonoBehaviour
             discardConfirmationMenu.gameObject.SetActive(false);
         }
 
+        InitializeTabs();
         FindOrCreateSlots();
     }
 
@@ -93,6 +102,35 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    private void InitializeTabs()
+    {
+        if (tabsParent == null || tabPrefab == null)
+        {
+            return;
+        }
+
+        ItemCategory[] categories = { ItemCategory.Consumable, ItemCategory.Equipable, ItemCategory.Key };
+        string[] tabNames = { "CONS", "EQUIP", "KEY" };
+
+        for (int i = 0; i < categories.Length; i++)
+        {
+            GameObject tabObject = Instantiate(tabPrefab, tabsParent);
+            InventoryTab tab = tabObject.GetComponent<InventoryTab>();
+            
+            if (tab == null)
+            {
+                tab = tabObject.AddComponent<InventoryTab>();
+            }
+
+            tab.Initialize(categories[i], tabNames[i]);
+            tabs.Add(tab);
+        }
+
+        currentTabIndex = 0;
+        currentCategory = ItemCategory.Consumable;
+        UpdateTabsVisuals();
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Tab))
@@ -108,6 +146,7 @@ public class InventoryManager : MonoBehaviour
             }
             else
             {
+                HandleTabNavigation();
                 HandleInventoryNavigation();
             }
         }
@@ -124,6 +163,9 @@ public class InventoryManager : MonoBehaviour
 
         if (isInventoryOpen)
         {
+            currentTabIndex = 0;
+            currentCategory = ItemCategory.Consumable;
+            UpdateTabsVisuals();
             RefreshInventoryUI();
             
             if (PlayerControlManager.Instance != null)
@@ -131,8 +173,6 @@ public class InventoryManager : MonoBehaviour
                 PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
             }
 
-            //Cursor.lockState = CursorLockMode.None;
-            //Cursor.visible = true;
         }
         else
         {
@@ -206,11 +246,13 @@ public class InventoryManager : MonoBehaviour
 
     private void RefreshInventoryUI()
     {
+        List<InventorySlot> filteredSlots = GetFilteredSlots();
+
         for (int i = 0; i < slotUIList.Count; i++)
         {
-            if (i < inventorySlots.Count)
+            if (i < filteredSlots.Count)
             {
-                slotUIList[i].Setup(inventorySlots[i], this);
+                slotUIList[i].Setup(filteredSlots[i], this);
             }
             else
             {
@@ -226,7 +268,7 @@ public class InventoryManager : MonoBehaviour
 
         ClearItemDisplay();
 
-        if (inventorySlots.Count == 0)
+        if (filteredSlots.Count == 0)
         {
             if (emptyMessageObject != null)
             {
@@ -267,6 +309,60 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
+    private List<InventorySlot> GetFilteredSlots()
+    {
+        List<InventorySlot> filtered = new List<InventorySlot>();
+        
+        foreach (InventorySlot slot in inventorySlots)
+        {
+            if (slot.itemData != null && slot.itemData.category == currentCategory)
+            {
+                filtered.Add(slot);
+            }
+        }
+        
+        return filtered;
+    }
+
+    private void UpdateTabsVisuals()
+    {
+        for (int i = 0; i < tabs.Count; i++)
+        {
+            tabs[i].SetSelected(i == currentTabIndex);
+        }
+    }
+
+    private void HandleTabNavigation()
+    {
+        bool moveRight = Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D);
+        bool moveLeft = Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A);
+
+        if (moveRight)
+        {
+            currentTabIndex++;
+            if (currentTabIndex >= tabs.Count)
+            {
+                currentTabIndex = 0;
+            }
+            
+            currentCategory = tabs[currentTabIndex].GetCategory();
+            UpdateTabsVisuals();
+            RefreshInventoryUI();
+        }
+        else if (moveLeft)
+        {
+            currentTabIndex--;
+            if (currentTabIndex < 0)
+            {
+                currentTabIndex = tabs.Count - 1;
+            }
+            
+            currentCategory = tabs[currentTabIndex].GetCategory();
+            UpdateTabsVisuals();
+            RefreshInventoryUI();
+        }
+    }
+
     public void SelectSlot(ItemSlotUI selectedSlot)
     {
         if (currentlySelectedSlot != null)
@@ -277,6 +373,7 @@ public class InventoryManager : MonoBehaviour
         currentlySelectedSlot = selectedSlot;
         currentlySelectedSlot.SetSelected(true);
 
+        List<InventorySlot> filteredSlots = GetFilteredSlots();
         currentSelectedIndex = slotUIList.IndexOf(selectedSlot);
 
         DisplayItemDetails(selectedSlot.GetSlot());
@@ -284,7 +381,9 @@ public class InventoryManager : MonoBehaviour
 
     private void SelectSlotByIndex(int index)
     {
-        if (index < 0 || index >= inventorySlots.Count)
+        List<InventorySlot> filteredSlots = GetFilteredSlots();
+        
+        if (index < 0 || index >= filteredSlots.Count)
         {
             return;
         }
@@ -297,7 +396,9 @@ public class InventoryManager : MonoBehaviour
 
     private void HandleInventoryNavigation()
     {
-        if (inventorySlots.Count == 0)
+        List<InventorySlot> filteredSlots = GetFilteredSlots();
+        
+        if (filteredSlots.Count == 0)
         {
             return;
         }
@@ -308,7 +409,7 @@ public class InventoryManager : MonoBehaviour
         if (moveDown)
         {
             int nextIndex = currentSelectedIndex + 1;
-            if (nextIndex >= inventorySlots.Count)
+            if (nextIndex >= filteredSlots.Count)
             {
                 nextIndex = 0;
             }
@@ -319,12 +420,12 @@ public class InventoryManager : MonoBehaviour
             int previousIndex = currentSelectedIndex - 1;
             if (previousIndex < 0)
             {
-                previousIndex = inventorySlots.Count - 1;
+                previousIndex = filteredSlots.Count - 1;
             }
             SelectSlotByIndex(previousIndex);
         }
 
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.E))
         {
             OpenDiscardMenu();
         }
@@ -425,7 +526,7 @@ public class InventoryManager : MonoBehaviour
             
             if (!slot.itemData.disposable)
             {
-                description += ". Não pode ser descartado";
+                description += ". Cannot be discarted";
             }
             
             itemDescriptionText.text = description;

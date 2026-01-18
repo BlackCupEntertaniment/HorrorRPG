@@ -1,5 +1,12 @@
 using UnityEngine;
 
+public enum ItemCategory
+{
+    Consumable,
+    Equipable,
+    Key
+}
+
 [CreateAssetMenu(fileName = "New Item", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
 {
@@ -7,6 +14,9 @@ public class ItemData : ScriptableObject
     public string itemName;
     public string description;
     public Sprite icon;
+
+    [Header("Classification")]
+    public ItemCategory category = ItemCategory.Consumable;
 
     [Header("Properties")]
     public bool isStackable = true;
