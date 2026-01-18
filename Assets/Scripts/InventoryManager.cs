@@ -345,6 +345,11 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
+        if (!currentlySelectedSlot.GetSlot().itemData.disposable)
+        {
+            return;
+        }
+
         isDiscardMenuOpen = true;
         originalDescriptionText = itemDescriptionText != null ? itemDescriptionText.text : "";
 
@@ -416,7 +421,14 @@ public class InventoryManager : MonoBehaviour
 
         if (itemDescriptionText != null)
         {
-            itemDescriptionText.text = slot.itemData.description;
+            string description = slot.itemData.description;
+            
+            if (!slot.itemData.disposable)
+            {
+                description += ". Não pode ser descartado";
+            }
+            
+            itemDescriptionText.text = description;
         }
     }
 

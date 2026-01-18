@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551f87845403174449b3f5906984cff5, type: 3}
   m_Name: Crucifix
   m_EditorClassIdentifier: 
-  itemName: Lamp
-  description: Effective against creatures from the dark
+  itemName: Crucifix
+  description: Effective agains creatures from another realm
   icon: {fileID: 21300000, guid: 4b9b64f46a21e384097b280a4c50923c, type: 3}
   isStackable: 0
   maxStackSize: 10
+  disposable: 1
