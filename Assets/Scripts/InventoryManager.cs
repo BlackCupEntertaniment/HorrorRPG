@@ -546,4 +546,40 @@ public class InventoryManager : MonoBehaviour
             itemDescriptionText.text = "";
         }
     }
+
+    public bool HasItem(ItemData itemData, int quantity)
+    {
+        foreach (var slot in inventorySlots)
+        {
+            if (slot != null && slot.itemData == itemData)
+            {
+                if (slot.quantity >= quantity)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public bool ConsumeItem(ItemData itemData, int quantity)
+    {
+        foreach (var slot in inventorySlots)
+        {
+            if (slot != null && slot.itemData == itemData)
+            {
+                if (slot.quantity >= quantity)
+                {
+                    slot.quantity -= quantity;
+                    if (slot.quantity <= 0)
+                    {
+                        inventorySlots.Remove(slot);
+                    }
+                    RefreshInventoryUI();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

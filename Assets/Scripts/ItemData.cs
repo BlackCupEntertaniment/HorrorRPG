@@ -19,9 +19,10 @@ public class ItemData : ScriptableObject
     public ItemCategory category = ItemCategory.Consumable;
 
     [Header("Properties")]
-    public bool isStackable = true;
     public int maxStackSize = 99;
     public bool disposable = true;
+    
+    public bool isStackable => maxStackSize > 1;
 }
 
 [System.Serializable]
