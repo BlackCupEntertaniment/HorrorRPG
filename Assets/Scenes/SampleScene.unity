@@ -1238,6 +1238,18 @@ PrefabInstance:
       value: ATTACK
       objectReference: {fileID: 0}
     - target: {fileID: 4633175471499025932, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4633175471499025932, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4633175471499025932, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4633175471499025932, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
       propertyPath: m_HorizontalAlignment
       value: 1
       objectReference: {fileID: 0}
@@ -1321,9 +1333,29 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7204664386028147962, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204664386028147962, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204664386028147962, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7204664386028147962, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7286905590607675559, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
       propertyPath: m_Name
       value: ConfirmButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286905590607675559, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1478,7 +1510,7 @@ MonoBehaviour:
   descriptionBackground: {fileID: 997929697}
   iconBackground: {fileID: 220864034}
   tabsParent: {fileID: 483342847}
-  tabPrefab: {fileID: 4464020060642955940, guid: 6df121ee811e72f40a4c6e56014bd5ca, type: 3}
+  tabPrefab: {fileID: 2164441430414296806, guid: d4fc7abdf0edf3746a13218994ce3af9, type: 3}
   itemSlotPrefab: {fileID: 1253506846}
   maxSlots: 9
   promptDisplayDuration: 2
@@ -3073,7 +3105,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 345623918}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 723770602}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -3932,6 +3964,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: ConfirmButton (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 7286905590607675559, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4317,6 +4353,10 @@ PrefabInstance:
     - target: {fileID: 7286905590607675559, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
       propertyPath: m_Name
       value: ConfirmButton (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7286905590607675559, guid: 1c48a67a1583b224f96b15f982a8aabf, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -9131,7 +9171,7 @@ MonoBehaviour:
   runButton: {fileID: 866663024}
   weaponTabsParent: {fileID: 2002673732}
   weaponSlotsParent: {fileID: 447341258}
-  weaponTabPrefab: {fileID: 4464020060642955940, guid: 6df121ee811e72f40a4c6e56014bd5ca, type: 3}
+  weaponTabPrefab: {fileID: 1743399651928015130, guid: 6fbfb7c33e1957345add245e39131f79, type: 3}
   weaponSlotPrefab: {fileID: 92983178}
   maxWeaponSlots: 9
 --- !u!114 &1815378352 stripped
