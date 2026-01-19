@@ -154,6 +154,11 @@ public class InventoryManager : MonoBehaviour
 
     public void ToggleInventory()
     {
+        if (BattleManager.Instance != null && BattleManager.Instance.IsInBattle())
+        {
+            return;
+        }
+
         isInventoryOpen = !isInventoryOpen;
         
         if (inventoryCanvas != null)
@@ -581,5 +586,48 @@ public class InventoryManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public List<ItemData> GetAllItemsOfCategory(ItemCategory category)
+    {
+        List<ItemData> items = new List<ItemData>();
+        
+        foreach (InventorySlot slot in inventorySlots)
+        {
+            if (slot != null && slot.itemData != null && slot.itemData.category == category)
+            {
+                items.Add(slot.itemData);
+            }
+        }
+
+        return items;
+    }
+
+    public List<ItemData> GetAllItems()
+    {
+        List<ItemData> items = new List<ItemData>();
+        
+        foreach (InventorySlot slot in inventorySlots)
+        {
+            if (slot != null && slot.itemData != null)
+            {
+                items.Add(slot.itemData);
+            }
+        }
+
+        return items;
+    }
+
+    public int GetItemQuantity(ItemData itemData)
+    {
+        foreach (InventorySlot slot in inventorySlots)
+        {
+            if (slot != null && slot.itemData == itemData)
+            {
+                return slot.quantity;
+            }
+        }
+
+        return 0;
     }
 }

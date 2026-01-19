@@ -56,6 +56,11 @@ public class BattleManager : MonoBehaviour
 
         PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
 
+        if (BattleUIManager.Instance != null)
+        {
+            BattleUIManager.Instance.OpenMainMenu();
+        }
+
         Debug.Log("BattleManager: Batalha iniciada.");
     }
 
@@ -69,6 +74,11 @@ public class BattleManager : MonoBehaviour
         battleArena.SetActive(false);
 
         PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
+
+        if (BattleUIManager.Instance != null)
+        {
+            BattleUIManager.Instance.CloseMainMenu();
+        }
 
         Debug.Log("BattleManager: Batalha encerrada.");
     }
