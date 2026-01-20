@@ -5,6 +5,9 @@ public class BattleTrigger3D : MonoBehaviour
     [Header("Enemy Renderer")]
     [SerializeField] private MeshRenderer enemyRenderer;
 
+    [Header("Enemy Data")]
+    [SerializeField] private EnemyData enemyData;
+
     [Header("Trigger Settings")]
     [SerializeField] private bool disableAfterTrigger = true;
 
@@ -24,7 +27,13 @@ public class BattleTrigger3D : MonoBehaviour
             return;
         }
 
-        BattleManager.Instance.StartBattle(enemyRenderer);
+        if (enemyData == null)
+        {
+            Debug.LogWarning("BattleTrigger3D: enemyData não está definido no Inspector.");
+            return;
+        }
+
+        BattleManager.Instance.StartBattle(enemyRenderer, enemyData);
 
         if (disableAfterTrigger)
         {

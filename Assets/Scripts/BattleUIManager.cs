@@ -23,6 +23,11 @@ public class BattleUIManager : MonoBehaviour
     [SerializeField] private GameObject weaponTabPrefab;
     [SerializeField] private GameObject weaponSlotPrefab;
 
+    [Header("Health Bars")]
+    [SerializeField] private HealthBar playerHealthBar;
+    [SerializeField] private HealthBar enemyHealthBar;
+
+
     [Header("Settings")]
     [SerializeField] private int maxWeaponSlots = 9;
 
@@ -65,6 +70,7 @@ public class BattleUIManager : MonoBehaviour
         InitializeMainMenuButtons();
         InitializeWeaponTabs();
         FindOrCreateWeaponSlots();
+        DisableHealthBars();
     }
 
     private void InitializeMainMenuButtons()
@@ -159,6 +165,78 @@ public class BattleUIManager : MonoBehaviour
         }
     }
 
+    public void InitializeBattle()
+    {
+        EnableHealthBars();
+        UpdateHealthBars();
+    }
+
+    public void UpdateHealthBars()
+    {
+        if (BattleManager.Instance != null && BattleManager.Instance.CurrentEnemyData != null)
+        {
+            EnemyData enemyData = BattleManager.Instance.CurrentEnemyData;
+            int enemyCurrentHealth = BattleManager.Instance.CurrentEnemyHealth;
+
+            if (enemyHealthBar != null)
+            {
+                enemyHealthBar.SetName(enemyData.enemyName);
+                enemyHealthBar.SetHealth(enemyCurrentHealth, enemyData.maxHealth);
+            }
+        }
+
+        if (PlayerStats.Instance != null)
+        {
+            if (playerHealthBar != null)
+            {
+                playerHealthBar.SetName("Player");
+                playerHealthBar.SetHealth(PlayerStats.Instance.CurrentHealth, PlayerStats.Instance.MaxHealth);
+            }
+        }
+    }
+
+    private void EnableHealthBars()
+    {
+        if (playerHealthBar != null)
+        {
+            playerHealthBar.gameObject.SetActive(true);
+        }
+
+        if (enemyHealthBar != null)
+        {
+            enemyHealthBar.gameObject.SetActive(true);
+        }
+    }
+
+    private void DisableHealthBars()
+    {
+        if (playerHealthBar != null)
+        {
+            playerHealthBar.gameObject.SetActive(false);
+        }
+
+        if (enemyHealthBar != null)
+        {
+            enemyHealthBar.gameObject.SetActive(false);
+        }
+    }
+
+    public void HideAllMenus()
+    {
+        if (battleMainMenuBackground != null)
+        {
+            battleMainMenuBackground.SetActive(false);
+        }
+
+        if (attackMenuBackground != null)
+        {
+            attackMenuBackground.SetActive(false);
+        }
+
+        isMainMenuOpen = false;
+        isAttackMenuOpen = false;
+    }
+
     public void OpenMainMenu()
     {
         if (battleMainMenuBackground != null)
@@ -181,6 +259,13 @@ public class BattleUIManager : MonoBehaviour
                 mainMenuButtons[currentMainMenuIndex].SetSelected(false);
             }
         }
+
+    }
+
+    public void CloseBattleUI()
+    {
+        DisableHealthBars();
+        CloseMainMenu();
     }
 
     private void HandleMainMenuNavigation()
@@ -524,13 +609,28 @@ public class BattleUIManager : MonoBehaviour
         {
             WeaponData selectedWeapon = currentlySelectedWeaponSlot.GetWeapon();
             
+            if (InventoryManager.Instance != null && !selectedWeapon.CanUse(InventoryManager.Instance))
+            {
+                Debug.Log("Sem munição para usar esta arma!");
+                return;
+            }
+            
             if (RecentWeaponsManager.Instance != null)
             {
                 RecentWeaponsManager.Instance.AddRecentWeapon(selectedWeapon);
             }
 
+            if (selectedWeapon.requiresAmmo && InventoryManager.Instance != null)
+            {
+                InventoryManager.Instance.ConsumeItem(selectedWeapon.ammoType, 1);
+            }
+
             CloseAttackMenu();
-            OpenMainMenu();
+
+            if (BattleManager.Instance != null)
+            {
+                BattleManager.Instance.PlayerAttack(selectedWeapon);
+            }
         }
     }
 }
