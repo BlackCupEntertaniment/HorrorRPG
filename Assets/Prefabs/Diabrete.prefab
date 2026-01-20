@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3253700679543076030}
-  - component: {fileID: 6197966611426123516}
-  - component: {fileID: 7909663781974811919}
   - component: {fileID: 4316321087566340183}
   - component: {fileID: 4885880762504293889}
   - component: {fileID: 3542794934292622994}
@@ -38,59 +36,6 @@ Transform:
   - {fileID: 6311250154306785485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 7, y: -180, z: 0}
---- !u!33 &6197966611426123516
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2172479759352824477}
-  m_Mesh: {fileID: 0}
---- !u!23 &7909663781974811919
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2172479759352824477}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &4316321087566340183
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2e32856dfb0bb13499913332fdae1469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyRenderer: {fileID: 7909663781974811919}
+  enemyRenderer: {fileID: 8980030201657445637}
+  enemyData: {fileID: 11400000, guid: ff07a274bbe6fb34383a84c6341d1a27, type: 2}
   disableAfterTrigger: 1
 --- !u!65 &4885880762504293889
 BoxCollider:
@@ -124,7 +70,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
+  m_Size: {x: 2, y: 1, z: 2}
   m_Center: {x: 0, y: 0.61, z: 0}
 --- !u!114 &3542794934292622994
 MonoBehaviour:

@@ -11,6 +11,7 @@ public class BattleManager : MonoBehaviour
     [Header("Battle Arena")]
     [SerializeField] private GameObject battleArena;
     [SerializeField] private MeshRenderer battleEnemyRenderer;
+    [SerializeField] private BattleEnemyEffects battleEnemyEffects;
 
     [Header("Enemy Data")]
     [SerializeField] private EnemyData currentEnemyData;
@@ -106,6 +107,11 @@ public class BattleManager : MonoBehaviour
         int damage = weapon.GetEffectiveDamage(currentEnemyData.category);
         currentEnemyHealth = Mathf.Max(0, currentEnemyHealth - damage);
 
+        if (battleEnemyEffects != null)
+        {
+            battleEnemyEffects.PlayHitEffects();
+        }
+
         Debug.Log($"Player atacou com {weapon.itemName} causando {damage} de dano!");
 
         if (BattleUIManager.Instance != null)
@@ -127,6 +133,12 @@ public class BattleManager : MonoBehaviour
         if (PlayerStats.Instance != null)
         {
             PlayerStats.Instance.TakeDamage(enemyDamage);
+            
+            if (BattlePlayerEffects.Instance != null)
+            {
+                BattlePlayerEffects.Instance.PlayDamageEffects();
+            }
+            
             Debug.Log($"Inimigo atacou causando {enemyDamage} de dano!");
         }
 
