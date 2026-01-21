@@ -95,6 +95,7 @@ MonoBehaviour:
   nameText: {fileID: 7262875394680780280}
   healthText: {fileID: 5451874677214464101}
   healthBarImage: {fileID: 1141498416252715415}
+  animationSpeed: 4
 --- !u!1 &5888114065850277990
 GameObject:
   m_ObjectHideFlags: 0
