@@ -13,6 +13,9 @@ public class BattlePlayerEffects : MonoBehaviour
 
     [Header("Camera Shake Settings")]
     [SerializeField] private bool enableCameraShake = false;
+    [SerializeField] private ScreenShake screenShake;
+    [SerializeField] private float shakeDuration = 0.2f;
+    [SerializeField] private float shakeIntensity = 0.15f;
 
     private Coroutine damageFlashCoroutine;
 
@@ -61,6 +64,11 @@ public class BattlePlayerEffects : MonoBehaviour
 
     public void PlayCameraShake()
     {
+        if (screenShake != null)
+        {
+            screenShake.Shake(shakeDuration, shakeIntensity);
+            screenShake.ShakeRotation(shakeDuration, shakeIntensity/2);
+        }
     }
 
     private IEnumerator DamageFlashCoroutine()

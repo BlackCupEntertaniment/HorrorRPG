@@ -29,6 +29,8 @@ public class HealthBar : MonoBehaviour
 
     public void SetHealth(int currentHealth, int maxHealth)
     {
+        bool shouldAnimate = currentHealth < currentHealthValue;
+        
         currentHealthValue = currentHealth;
         maxHealthValue = maxHealth;
 
@@ -44,9 +46,17 @@ public class HealthBar : MonoBehaviour
             if (animationCoroutine != null)
             {
                 StopCoroutine(animationCoroutine);
+                animationCoroutine = null;
             }
             
-            animationCoroutine = StartCoroutine(AnimateHealthBar());
+            if (shouldAnimate)
+            {
+                animationCoroutine = StartCoroutine(AnimateHealthBar());
+            }
+            else
+            {
+                healthBarImage.fillAmount = targetFillAmount;
+            }
         }
     }
 

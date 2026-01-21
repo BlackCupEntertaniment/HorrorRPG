@@ -136,6 +136,38 @@ MonoBehaviour:
   battleEnemyRenderer: {fileID: 5550823111110114375}
   battleEnemyEffects: {fileID: 7670418945173382487}
   currentEnemyData: {fileID: 0}
+--- !u!1 &1625140779020699140
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 375767448169609775}
+  m_Layer: 0
+  m_Name: CameraParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &375767448169609775
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1625140779020699140}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.29999924, z: -20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 7532448600219808853}
+  m_Father: {fileID: 8559932306472298349}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1799661168634565458
 GameObject:
   m_ObjectHideFlags: 0
@@ -363,6 +395,7 @@ GameObject:
   - component: {fileID: 7532448600219808853}
   - component: {fileID: 8696539842476154165}
   - component: {fileID: 4100278432941967639}
+  - component: {fileID: 7241368045882699679}
   m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
@@ -378,12 +411,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4664354613743576471}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.3, z: -20}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8559932306472298349}
+  m_Father: {fileID: 375767448169609775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &8696539842476154165
 Camera:
@@ -480,6 +513,18 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
+--- !u!114 &7241368045882699679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4664354613743576471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27288b8e118bca246a99dd761ee16965, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4760480064414514462
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,7 +715,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7719493585613235202}
-  - {fileID: 7532448600219808853}
+  - {fileID: 375767448169609775}
   - {fileID: 5246596984539413271}
   m_Father: {fileID: 7902896265959316450}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
