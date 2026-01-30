@@ -45,6 +45,8 @@ public class BattleUIManager : MonoBehaviour
 
     private bool isAttackMenuOpen = false;
 
+    private UIState attackMenuState;
+
     private void Awake()
     {
         if (Instance == null)
@@ -259,7 +261,6 @@ public class BattleUIManager : MonoBehaviour
                 mainMenuButtons[currentMainMenuIndex].SetSelected(false);
             }
         }
-
     }
 
     public void CloseBattleUI()
@@ -362,7 +363,19 @@ public class BattleUIManager : MonoBehaviour
             currentCategory = WeaponCategory.Used;
             UpdateWeaponTabsVisuals();
             RefreshWeaponList();
+
+            attackMenuState = new UIState("AttackMenu", OnAttackMenuBack);
+            if (UINavigationManager.Instance != null)
+            {
+                UINavigationManager.Instance.PushState(attackMenuState);
+            }
         }
+    }
+
+    private void OnAttackMenuBack()
+    {
+        CloseAttackMenu();
+        OpenMainMenu();
     }
 
     private void CloseAttackMenu()
@@ -377,6 +390,11 @@ public class BattleUIManager : MonoBehaviour
                 currentlySelectedWeaponSlot.SetSelected(false);
                 currentlySelectedWeaponSlot = null;
             }
+        }
+
+        if (UINavigationManager.Instance != null)
+        {
+            UINavigationManager.Instance.PopState();
         }
     }
 
@@ -575,12 +593,6 @@ public class BattleUIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.E))
         {
             OnWeaponSelected();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            CloseAttackMenu();
-            OpenMainMenu();
         }
     }
 

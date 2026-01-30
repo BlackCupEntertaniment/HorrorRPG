@@ -47,6 +47,9 @@ public class InventoryManager : MonoBehaviour
     private int currentTabIndex = 0;
     private ItemCategory currentCategory = ItemCategory.Consumable;
 
+    private UIState inventoryState;
+    private UIState discardMenuState;
+
     private void Awake()
     {
         if (Instance == null)
@@ -178,16 +181,38 @@ public class InventoryManager : MonoBehaviour
                 PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
             }
 
+            inventoryState = new UIState("Inventory", CloseInventory);
+            if (UINavigationManager.Instance != null)
+            {
+                UINavigationManager.Instance.PushState(inventoryState);
+            }
         }
         else
         {
-            if (PlayerControlManager.Instance != null)
-            {
-                PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
-            }
+            CloseInventory();
+        }
+    }
 
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+    private void CloseInventory()
+    {
+        isInventoryOpen = false;
+
+        if (inventoryCanvas != null)
+        {
+            inventoryCanvas.SetActive(false);
+        }
+
+        if (PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.UnlockControl(CONTROL_LOCK_ID);
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        if (UINavigationManager.Instance != null)
+        {
+            UINavigationManager.Instance.PopState();
         }
     }
 
@@ -468,6 +493,12 @@ public class InventoryManager : MonoBehaviour
         {
             discardConfirmationMenu.gameObject.SetActive(true);
             discardConfirmationMenu.Show(OnDiscardConfirmed, OnDiscardCancelled);
+
+            discardMenuState = new UIState("DiscardMenu", OnDiscardCancelled);
+            if (UINavigationManager.Instance != null)
+            {
+                UINavigationManager.Instance.PushState(discardMenuState);
+            }
         }
     }
 
@@ -503,6 +534,11 @@ public class InventoryManager : MonoBehaviour
         if (discardConfirmationMenu != null)
         {
             discardConfirmationMenu.Hide();
+        }
+
+        if (UINavigationManager.Instance != null)
+        {
+            UINavigationManager.Instance.PopState();
         }
     }
 
