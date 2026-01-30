@@ -14,8 +14,8 @@ public class BattleEnemyEffects : MonoBehaviour
     [SerializeField] private float squeezeScaleX = 0.7f;
     [SerializeField] private float squeezeScaleY = 1.3f;
 
-    private const string HIT_EFFECT_PROPERTY = "_HitEffect";
-    private Material enemyMaterial;
+    private static readonly int HitEffectProperty = Shader.PropertyToID("_HitEffect");
+    private MaterialPropertyBlock propertyBlock;
     private Vector3 originalScale;
     private Coroutine hitFlashCoroutine;
     private Coroutine squeezeCoroutine;
@@ -34,20 +34,7 @@ public class BattleEnemyEffects : MonoBehaviour
 
         if (enemyRenderer != null)
         {
-            enemyMaterial = enemyRenderer.material;
-            
-            if (enemyMaterial != null && enemyMaterial.HasProperty(HIT_EFFECT_PROPERTY))
-            {
-                Debug.Log($"Material '{enemyMaterial.name}' tem a propriedade {HIT_EFFECT_PROPERTY}");
-            }
-            else if (enemyMaterial != null)
-            {
-                Debug.LogWarning($"Material '{enemyMaterial.name}' NÃO tem a propriedade {HIT_EFFECT_PROPERTY}");
-            }
-            else
-            {
-                Debug.LogError("Enemy Material é null!");
-            }
+            propertyBlock = new MaterialPropertyBlock();
         }
         else
         {
@@ -65,15 +52,9 @@ public class BattleEnemyEffects : MonoBehaviour
 
     public void PlayHitFlash()
     {
-        if (enemyMaterial == null)
+        if (enemyRenderer == null || propertyBlock == null)
         {
-            Debug.LogError("PlayHitFlash: enemyMaterial é null!");
-            return;
-        }
-
-        if (!enemyMaterial.HasProperty(HIT_EFFECT_PROPERTY))
-        {
-            Debug.LogError($"PlayHitFlash: Material '{enemyMaterial.name}' não tem a propriedade {HIT_EFFECT_PROPERTY}");
+            Debug.LogError("PlayHitFlash: enemyRenderer ou propertyBlock é null!");
             return;
         }
 
@@ -108,12 +89,17 @@ public class BattleEnemyEffects : MonoBehaviour
             float normalizedTime = elapsedTime / hitFlashDuration;
             float flashValue = Mathf.Lerp(hitFlashIntensity, 0f, normalizedTime);
             
-            enemyMaterial.SetFloat(HIT_EFFECT_PROPERTY, flashValue);
+            enemyRenderer.GetPropertyBlock(propertyBlock);
+            propertyBlock.SetFloat(HitEffectProperty, flashValue);
+            enemyRenderer.SetPropertyBlock(propertyBlock);
             
             yield return null;
         }
 
-        enemyMaterial.SetFloat(HIT_EFFECT_PROPERTY, 0f);
+        enemyRenderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetFloat(HitEffectProperty, 0f);
+        enemyRenderer.SetPropertyBlock(propertyBlock);
+        
         hitFlashCoroutine = null;
     }
 
@@ -162,9 +148,11 @@ public class BattleEnemyEffects : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (enemyMaterial != null)
+        if (enemyRenderer != null && propertyBlock != null)
         {
-            enemyMaterial.SetFloat(HIT_EFFECT_PROPERTY, 0f);
+            enemyRenderer.GetPropertyBlock(propertyBlock);
+            propertyBlock.SetFloat(HitEffectProperty, 0f);
+            enemyRenderer.SetPropertyBlock(propertyBlock);
         }
     }
 }
