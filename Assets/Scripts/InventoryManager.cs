@@ -28,7 +28,7 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private int maxSlots = 9;
 
     [Header("Prompt Messages")]
-    private const string inventoryFullMessage = "Inventario cheio";
+    private const string inventoryFullMessage = "Inventario de consumiveis cheio";
     private const string partialPickupMessage = "Alguns itens ficaram para trás";
     [SerializeField] private float promptDisplayDuration = 2f;
 
@@ -230,7 +230,7 @@ public class InventoryManager : MonoBehaviour
             }
             else
             {
-                if (inventorySlots.Count >= maxSlots)
+                if (itemData.category == ItemCategory.Consumable && GetUsedConsumableSlots() >= maxSlots)
                 {
                     break;
                 }
@@ -250,7 +250,11 @@ public class InventoryManager : MonoBehaviour
 
         if (addedQuantity == 0)
         {
-            ShowInventoryMessage(inventoryFullMessage);
+            string categoryName = GetCategoryDisplayName(itemData.category);
+            string message = itemData.category == ItemCategory.Consumable 
+                ? inventoryFullMessage 
+                : $"Não foi possível adicionar {itemData.itemName}";
+            ShowInventoryMessage(message);
         }
         else if (addedQuantity < quantity)
         {
@@ -264,6 +268,34 @@ public class InventoryManager : MonoBehaviour
         }
 
         return addedQuantity;
+    }
+
+    private int GetUsedConsumableSlots()
+    {
+        int count = 0;
+        foreach (var slot in inventorySlots)
+        {
+            if (slot.itemData != null && slot.itemData.category == ItemCategory.Consumable)
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private string GetCategoryDisplayName(ItemCategory category)
+    {
+        switch (category)
+        {
+            case ItemCategory.Consumable:
+                return "Consumível";
+            case ItemCategory.Equipable:
+                return "Equipamento";
+            case ItemCategory.Key:
+                return "Chave";
+            default:
+                return "Item";
+        }
     }
 
     private void ShowInventoryMessage(string message)
