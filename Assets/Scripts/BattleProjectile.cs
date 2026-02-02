@@ -100,13 +100,11 @@ public class BattleProjectile : MonoBehaviour
         
         Vector3 offset = new Vector3(
             Mathf.Cos(loopAngle) * config.loopRadius,
-            0f,
-            Mathf.Sin(loopAngle) * config.loopRadius
+            Mathf.Sin(loopAngle) * config.loopRadius,
+            0f
         );
         
         transform.position = loopCenter + offset;
-        
-        transform.rotation = Quaternion.Euler(0f, 0f, loopAngle * Mathf.Rad2Deg);
         
         if (loopTimer >= loopDuration)
         {
