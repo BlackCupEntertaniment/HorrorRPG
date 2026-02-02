@@ -10,4 +10,7 @@ public class EnemyData : ScriptableObject
     public int maxHealth = 50;
     public int baseDamage = 10;
     public EnemyType category = EnemyType.None;
+    
+    [Header("Projectile Attack")]
+    public ProjectileConfig projectileConfig;
 }

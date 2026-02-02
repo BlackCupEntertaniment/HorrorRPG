@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6685e28da0a86c64ba31ec06c9e1f471, type: 3}
+  m_Name: SlowEnemyProjectile
+  m_EditorClassIdentifier: 
+  loopRadius: 2.5
+  loopSpeed: 3
+  minLoopTime: 3
+  maxLoopTime: 6
+  travelSpeed: 5
+  projectilePrefab: {fileID: 2267285648246685531, guid: 65bc7bce635402c479f23ae1ce1fc034, type: 3}
+  projectileColor: {r: 1, g: 1, b: 1, a: 1}

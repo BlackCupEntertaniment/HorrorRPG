@@ -16,3 +16,4 @@ MonoBehaviour:
   maxHealth: 70
   baseDamage: 20
   category: 1
+  projectileConfig: {fileID: 11400000, guid: f0dd3ae83f99ca747b43111b809333bd, type: 2}

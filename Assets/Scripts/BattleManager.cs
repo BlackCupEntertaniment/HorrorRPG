@@ -129,23 +129,7 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(TURN_DELAY);
 
-        int enemyDamage = currentEnemyData.baseDamage;
-        if (PlayerStats.Instance != null)
-        {
-            PlayerStats.Instance.TakeDamage(enemyDamage);
-            
-            if (BattlePlayerEffects.Instance != null)
-            {
-                BattlePlayerEffects.Instance.PlayDamageEffects();
-            }
-            
-            Debug.Log($"Inimigo atacou causando {enemyDamage} de dano!");
-        }
-
-        if (BattleUIManager.Instance != null)
-        {
-            BattleUIManager.Instance.UpdateHealthBars();
-        }
+        yield return StartCoroutine(ProcessEnemyAttack());
 
         if (PlayerStats.Instance != null && !PlayerStats.Instance.IsAlive())
         {
@@ -162,6 +146,72 @@ public class BattleManager : MonoBehaviour
         if (BattleUIManager.Instance != null)
         {
             BattleUIManager.Instance.OpenMainMenu();
+        }
+    }
+
+    private IEnumerator ProcessEnemyAttack()
+    {
+        int enemyDamage = currentEnemyData.baseDamage;
+
+        if (currentEnemyData.projectileConfig != null && ProjectileManager.Instance != null)
+        {
+            int finalDamage = enemyDamage;
+            bool damageApplied = false;
+
+            ProjectileManager.Instance.SetDamageCallback((damage) =>
+            {
+                finalDamage = damage;
+                damageApplied = true;
+
+                if (PlayerStats.Instance != null && damage > 0)
+                {
+                    PlayerStats.Instance.TakeDamage(damage);
+
+                    if (BattlePlayerEffects.Instance != null)
+                    {
+                        BattlePlayerEffects.Instance.PlayDamageEffects();
+                    }
+
+                    Debug.Log($"Projétil causou {damage} de dano!");
+                }
+                else if (damage == 0)
+                {
+                    Debug.Log("Projétil bloqueado! Nenhum dano recebido.");
+                }
+
+                if (BattleUIManager.Instance != null)
+                {
+                    BattleUIManager.Instance.UpdateHealthBars();
+                }
+            });
+
+            yield return StartCoroutine(
+                ProjectileManager.Instance.ExecuteProjectileAttack(currentEnemyData.projectileConfig, enemyDamage)
+            );
+
+            while (!damageApplied)
+            {
+                yield return null;
+            }
+        }
+        else
+        {
+            if (PlayerStats.Instance != null)
+            {
+                PlayerStats.Instance.TakeDamage(enemyDamage);
+
+                if (BattlePlayerEffects.Instance != null)
+                {
+                    BattlePlayerEffects.Instance.PlayDamageEffects();
+                }
+
+                Debug.Log($"Inimigo atacou causando {enemyDamage} de dano!");
+            }
+
+            if (BattleUIManager.Instance != null)
+            {
+                BattleUIManager.Instance.UpdateHealthBars();
+            }
         }
     }
 
