@@ -11,9 +11,13 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float lookSensitivity = 2f;
     [SerializeField] private Transform cameraTransform;
     
+    [Header("UI")]
+    [SerializeField] private HandAnimationManager handAnimationManager;
+    
     private CharacterController characterController;
     private float verticalVelocity;
     private bool controlEnabled = true;
+    private bool isWalking;
     
     private void Awake()
     {
@@ -64,6 +68,27 @@ public class FirstPersonController : MonoBehaviour
         
         movement.y = verticalVelocity;
         characterController.Move(movement * Time.deltaTime);
+        
+        UpdateWalkingState(horizontal, vertical);
+    }
+    
+    private void UpdateWalkingState(float horizontal, float vertical)
+    {
+        if (handAnimationManager == null)
+            return;
+        
+        bool hasMovement = Mathf.Abs(horizontal) > 0.01f || Mathf.Abs(vertical) > 0.01f;
+        
+        if (hasMovement && !isWalking)
+        {
+            isWalking = true;
+            handAnimationManager.StartWalking();
+        }
+        else if (!hasMovement && isWalking)
+        {
+            isWalking = false;
+            handAnimationManager.StopWalking();
+        }
     }
     
     private void HandleRotation()
