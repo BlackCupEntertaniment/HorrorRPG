@@ -30,6 +30,11 @@ public class ProjectileManager : MonoBehaviour
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private int poolSize = 10;
 
+    [Header("Defense Effect UI")]
+    [SerializeField] private DefenseEffectUI leftDefenseEffect;
+    [SerializeField] private DefenseEffectUI middleDefenseEffect;
+    [SerializeField] private DefenseEffectUI rightDefenseEffect;
+
     private List<BattleProjectile> projectilePool = new List<BattleProjectile>();
     private BattleProjectile activeProjectile;
     private bool canDefend;
@@ -195,20 +200,41 @@ public class ProjectileManager : MonoBehaviour
 
     private void PlayDefenseAnimation(DefensePosition position)
     {
-        if (HandAnimationManager.Instance == null)
-            return;
+        if (HandAnimationManager.Instance != null)
+        {
+            switch (position)
+            {
+                case DefensePosition.Left:
+                    HandAnimationManager.Instance.PlayReachAnimationLeftHand();
+                    break;
+                case DefensePosition.Up:
+                    HandAnimationManager.Instance.PlayReachAnimation();
+                    break;
+                case DefensePosition.Right:
+                    HandAnimationManager.Instance.PlayReachAnimationRightHand();
+                    break;
+            }
+        }
 
+        DefenseEffectUI effectComponent = GetDefenseEffectComponent(position);
+        if (effectComponent != null)
+        {
+            effectComponent.Trigger();
+        }
+    }
+
+    private DefenseEffectUI GetDefenseEffectComponent(DefensePosition position)
+    {
         switch (position)
         {
             case DefensePosition.Left:
-                HandAnimationManager.Instance.PlayReachAnimationLeftHand();
-                break;
+                return leftDefenseEffect;
             case DefensePosition.Up:
-                HandAnimationManager.Instance.PlayReachAnimation();
-                break;
+                return middleDefenseEffect;
             case DefensePosition.Right:
-                HandAnimationManager.Instance.PlayReachAnimationRightHand();
-                break;
+                return rightDefenseEffect;
+            default:
+                return null;
         }
     }
 
