@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,6 +27,7 @@ public class InventoryManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] private int maxSlots = 9;
+    [SerializeField] private float itemAddDelay = 0.25f;
 
     [Header("Prompt Messages")]
     private const string inventoryFullMessage = "Inventario de consumiveis cheio";
@@ -49,6 +51,7 @@ public class InventoryManager : MonoBehaviour
 
     private UIState inventoryState;
     private UIState discardMenuState;
+    private int lastAddedQuantity;
 
     private void Awake()
     {
@@ -218,6 +221,26 @@ public class InventoryManager : MonoBehaviour
 
     public int AddItem(ItemData itemData, int quantity = 1)
     {
+        StartCoroutine(AddItemWithDelay(itemData, quantity));
+        return quantity;
+    }
+
+    public IEnumerator AddItemCoroutine(ItemData itemData, int quantity = 1)
+    {
+        yield return StartCoroutine(AddItemWithDelay(itemData, quantity));
+    }
+
+    public int GetLastAddedQuantity()
+    {
+        return lastAddedQuantity;
+    }
+
+    private IEnumerator AddItemWithDelay(ItemData itemData, int quantity)
+    {
+        PlayItemPickupAnimation();
+        
+        yield return new WaitForSeconds(itemAddDelay);
+        
         int remainingQuantity = quantity;
 
         while (remainingQuantity > 0)
@@ -247,6 +270,7 @@ public class InventoryManager : MonoBehaviour
         }
 
         int addedQuantity = quantity - remainingQuantity;
+        lastAddedQuantity = addedQuantity;
 
         if (addedQuantity == 0)
         {
@@ -260,16 +284,12 @@ public class InventoryManager : MonoBehaviour
         {
             string message = $"Você pegou {addedQuantity} de {itemData.itemName}\n{partialPickupMessage}";
             ShowInventoryMessage(message);
-            PlayItemPickupAnimation();
         }
         else
         {
             string message = $"Você pegou {addedQuantity} de {itemData.itemName}";
             ShowInventoryMessage(message);
-            PlayItemPickupAnimation();
         }
-
-        return addedQuantity;
     }
 
     private void PlayItemPickupAnimation()

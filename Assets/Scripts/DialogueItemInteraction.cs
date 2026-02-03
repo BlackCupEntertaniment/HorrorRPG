@@ -83,9 +83,16 @@ public class DialogueItemInteraction : MonoBehaviour, IInteractable
         if (!canBePickedUp || itemData == null)
             return;
 
+        StartCoroutine(CollectItemsCoroutine());
+    }
+
+    private IEnumerator CollectItemsCoroutine()
+    {
         if (InventoryManager.Instance != null)
         {
-            int addedQuantity = InventoryManager.Instance.AddItem(itemData, quantity);
+            yield return InventoryManager.Instance.AddItemCoroutine(itemData, quantity);
+
+            int addedQuantity = InventoryManager.Instance.GetLastAddedQuantity();
 
             if (addedQuantity > 0)
             {

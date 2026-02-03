@@ -3471,6 +3471,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 652378816764311128, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: itemAddDelay
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 1098245082168230412, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0

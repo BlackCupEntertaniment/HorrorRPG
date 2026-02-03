@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class ItemInteraction : MonoBehaviour, IInteractable
@@ -15,9 +16,16 @@ public class ItemInteraction : MonoBehaviour, IInteractable
         if (!CanInteract())
             return;
 
+        StartCoroutine(InteractCoroutine());
+    }
+
+    private IEnumerator InteractCoroutine()
+    {
         if (InventoryManager.Instance != null && itemData != null)
         {
-            int addedQuantity = InventoryManager.Instance.AddItem(itemData, quantity);
+            yield return InventoryManager.Instance.AddItemCoroutine(itemData, quantity);
+
+            int addedQuantity = InventoryManager.Instance.GetLastAddedQuantity();
 
             if (addedQuantity > 0)
             {
