@@ -163,6 +163,8 @@ public class ProjectileManager : MonoBehaviour
             return;
         }
 
+        PlayDefenseAnimation(inputPosition);
+
         float distance = activeProjectile.GetDistanceToTarget();
         DefenseResult result = EvaluateDefense(distance);
 
@@ -188,6 +190,25 @@ public class ProjectileManager : MonoBehaviour
 
             case DefenseResult.TooLate:
                 Debug.Log("Muito tarde para defender!");
+                break;
+        }
+    }
+
+    private void PlayDefenseAnimation(DefensePosition position)
+    {
+        if (HandAnimationManager.Instance == null)
+            return;
+
+        switch (position)
+        {
+            case DefensePosition.Left:
+                HandAnimationManager.Instance.PlayReachAnimationLeftHand();
+                break;
+            case DefensePosition.Up:
+                HandAnimationManager.Instance.PlayReachAnimation();
+                break;
+            case DefensePosition.Right:
+                HandAnimationManager.Instance.PlayReachAnimationRightHand();
                 break;
         }
     }

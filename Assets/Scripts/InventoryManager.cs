@@ -260,14 +260,24 @@ public class InventoryManager : MonoBehaviour
         {
             string message = $"Você pegou {addedQuantity} de {itemData.itemName}\n{partialPickupMessage}";
             ShowInventoryMessage(message);
+            PlayItemPickupAnimation();
         }
         else
         {
             string message = $"Você pegou {addedQuantity} de {itemData.itemName}";
             ShowInventoryMessage(message);
+            PlayItemPickupAnimation();
         }
 
         return addedQuantity;
+    }
+
+    private void PlayItemPickupAnimation()
+    {
+        if (HandAnimationManager.Instance != null)
+        {
+            HandAnimationManager.Instance.PlayReachAnimationRightHand();
+        }
     }
 
     private int GetUsedConsumableSlots()

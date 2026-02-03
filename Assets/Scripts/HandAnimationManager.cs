@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class HandAnimationManager : MonoBehaviour
 {
+    public static HandAnimationManager Instance { get; private set; }
+
     [Header("Hand References")]
     [SerializeField] private UISpriteAnimator leftHandAnimator;
     [SerializeField] private UISpriteAnimator rightHandAnimator;
@@ -23,6 +25,16 @@ public class HandAnimationManager : MonoBehaviour
 
     private void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         if (leftHandAnimator != null)
             leftHandRect = leftHandAnimator.GetComponent<RectTransform>();
 
@@ -63,6 +75,30 @@ public class HandAnimationManager : MonoBehaviour
 
         if (leftHandAnimator != null)
             leftHandAnimator.Play(reachAnimation);
+
+        if (rightHandAnimator != null)
+            rightHandAnimator.Play(reachAnimation);
+    }
+
+    public void PlayReachAnimationLeftHand()
+    {
+        if (reachAnimation == null)
+        {
+            Debug.LogWarning("HandAnimationManager: ReachAnimation not assigned!");
+            return;
+        }
+
+        if (leftHandAnimator != null)
+            leftHandAnimator.Play(reachAnimation);
+    }
+
+    public void PlayReachAnimationRightHand()
+    {
+        if (reachAnimation == null)
+        {
+            Debug.LogWarning("HandAnimationManager: ReachAnimation not assigned!");
+            return;
+        }
 
         if (rightHandAnimator != null)
             rightHandAnimator.Play(reachAnimation);
