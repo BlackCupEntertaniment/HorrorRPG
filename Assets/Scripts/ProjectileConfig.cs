@@ -10,9 +10,9 @@ public class ProjectileConfig : ScriptableObject
     [Header("Attack Settings")]
     public float minLoopTime = 2f;
     public float maxLoopTime = 5f;
-    public float travelSpeed = 8f;
+    public float minTravelSpeed = 3f;
+    public float maxTravelSpeed = 8f;
     
     [Header("Visual")]
-    public GameObject projectilePrefab;
-    public Color projectileColor = Color.red;
+    public Material projectileMaterial;
 }

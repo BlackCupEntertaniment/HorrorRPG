@@ -18,6 +18,8 @@ public enum DefensePosition
 
 public class BattleProjectile : MonoBehaviour
 {
+    [SerializeField] private MeshRenderer projectileMeshRenderer;
+    
     private ProjectileConfig config;
     private ProjectileState currentState;
     private DefensePosition targetPosition;
@@ -27,8 +29,7 @@ public class BattleProjectile : MonoBehaviour
     private float loopTimer;
     private float loopDuration;
     private int damageAmount;
-    private MeshRenderer meshRenderer;
-    private MaterialPropertyBlock propertyBlock;
+    private float initialDistanceToTarget;
 
     public ProjectileState CurrentState => currentState;
     public DefensePosition TargetPosition => targetPosition;
@@ -36,10 +37,9 @@ public class BattleProjectile : MonoBehaviour
 
     private void Awake()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
-        if (meshRenderer != null)
+        if (projectileMeshRenderer == null)
         {
-            propertyBlock = new MaterialPropertyBlock();
+            projectileMeshRenderer = GetComponent<MeshRenderer>();
         }
     }
 
@@ -53,11 +53,9 @@ public class BattleProjectile : MonoBehaviour
         loopTimer = 0f;
         loopDuration = Random.Range(config.minLoopTime, config.maxLoopTime);
         
-        if (meshRenderer != null && propertyBlock != null)
+        if (projectileMeshRenderer != null && config.projectileMaterial != null)
         {
-            meshRenderer.GetPropertyBlock(propertyBlock);
-            propertyBlock.SetColor("_BaseColor", config.projectileColor);
-            meshRenderer.SetPropertyBlock(propertyBlock);
+            projectileMeshRenderer.material = config.projectileMaterial;
         }
     }
 
@@ -66,6 +64,7 @@ public class BattleProjectile : MonoBehaviour
         targetTransform = target;
         targetPosition = position;
         currentState = ProjectileState.Traveling;
+        initialDistanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
     }
 
     public void BlockProjectile()
@@ -120,15 +119,19 @@ public class BattleProjectile : MonoBehaviour
             return;
         }
         
+        float currentDistance = Vector3.Distance(transform.position, targetTransform.position);
+        float proximityFactor = 1f - (currentDistance / initialDistanceToTarget);
+        proximityFactor = Mathf.Clamp01(proximityFactor);
+        
+        float currentSpeed = Mathf.Lerp(config.minTravelSpeed, config.maxTravelSpeed, proximityFactor);
+        
         transform.position = Vector3.MoveTowards(
             transform.position,
             targetTransform.position,
-            config.travelSpeed * Time.deltaTime
+            currentSpeed * Time.deltaTime
         );
         
-        float distance = Vector3.Distance(transform.position, targetTransform.position);
-        
-        if (distance < 0.1f)
+        if (currentDistance < 0.1f)
         {
             ProjectileManager.Instance.OnProjectileReachedTarget(this);
         }

@@ -16,6 +16,6 @@ MonoBehaviour:
   loopSpeed: 5
   minLoopTime: 4
   maxLoopTime: 6
-  travelSpeed: 6
-  projectilePrefab: {fileID: 2267285648246685531, guid: 65bc7bce635402c479f23ae1ce1fc034, type: 3}
-  projectileColor: {r: 1, g: 1, b: 1, a: 1}
+  minTravelSpeed: 3
+  maxTravelSpeed: 8
+  projectileMaterial: {fileID: 2100000, guid: 6934c8ed60baa3b47979f33eae300dab, type: 2}
