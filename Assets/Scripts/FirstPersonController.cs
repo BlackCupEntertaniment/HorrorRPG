@@ -101,5 +101,11 @@ public class FirstPersonController : MonoBehaviour
     public void SetControlEnabled(bool enabled)
     {
         controlEnabled = enabled;
+        
+        if (!enabled && isWalking && handAnimationManager != null)
+        {
+            isWalking = false;
+            handAnimationManager.StopWalking();
+        }
     }
 }
