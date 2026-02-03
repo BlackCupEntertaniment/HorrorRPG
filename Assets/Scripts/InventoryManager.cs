@@ -548,10 +548,10 @@ public class InventoryManager : MonoBehaviour
     {
         if (currentlySelectedSlot != null)
         {
-            int slotIndex = GetSlotIndex(currentlySelectedSlot);
-            if (slotIndex >= 0 && slotIndex < inventorySlots.Count)
+            InventorySlot slotToRemove = currentlySelectedSlot.GetSlot();
+            if (slotToRemove != null && inventorySlots.Contains(slotToRemove))
             {
-                inventorySlots.RemoveAt(slotIndex);
+                inventorySlots.Remove(slotToRemove);
             }
         }
 
