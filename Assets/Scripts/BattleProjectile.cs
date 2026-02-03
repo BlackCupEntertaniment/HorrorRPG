@@ -70,7 +70,7 @@ public class BattleProjectile : MonoBehaviour
     public void BlockProjectile()
     {
         currentState = ProjectileState.Blocked;
-        StartCoroutine(DestroyAfterDelay(0.5f));
+        ReturnToPool();
     }
 
     public void HitTarget()

@@ -115,8 +115,7 @@ public class ProjectileManager : MonoBehaviour
         }
 
         while (activeProjectile != null && 
-               (activeProjectile.CurrentState == ProjectileState.Traveling ||
-                activeProjectile.CurrentState == ProjectileState.Blocked))
+               activeProjectile.CurrentState == ProjectileState.Traveling)
         {
             yield return null;
         }
