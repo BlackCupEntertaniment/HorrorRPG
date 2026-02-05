@@ -16,10 +16,10 @@ MonoBehaviour:
   projectileSpawns:
   - projectileConfig: {fileID: 11400000, guid: f0dd3ae83f99ca747b43111b809333bd, type: 2}
     spawnDelay: 0
-    damageMultiplier: 1
+    damageMultiplier: 0.5
   - projectileConfig: {fileID: 11400000, guid: f0dd3ae83f99ca747b43111b809333bd, type: 2}
     spawnDelay: 0.75
-    damageMultiplier: 1
+    damageMultiplier: 0.5
   - projectileConfig: {fileID: 11400000, guid: f0dd3ae83f99ca747b43111b809333bd, type: 2}
     spawnDelay: 1
-    damageMultiplier: 1
+    damageMultiplier: 0.5

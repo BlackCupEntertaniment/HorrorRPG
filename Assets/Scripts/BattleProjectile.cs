@@ -52,6 +52,13 @@ public class BattleProjectile : MonoBehaviour
         loopTimer = 0f;
         loopDuration = Random.Range(config.minLoopTime, config.maxLoopTime);
         
+        Vector3 initialOffset = new Vector3(
+            Mathf.Cos(loopAngle) * config.loopRadius,
+            Mathf.Sin(loopAngle) * config.loopRadius,
+            0f
+        );
+        transform.position = loopCenter + initialOffset;
+        
         if (projectileMeshRenderer != null && config.projectileMaterial != null)
         {
             projectileMeshRenderer.material = config.projectileMaterial;

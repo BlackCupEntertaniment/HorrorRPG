@@ -125,7 +125,6 @@ public class ProjectileManager : MonoBehaviour
         Vector3 spawnPosition = spawnPoint != null ? spawnPoint.position : Vector3.zero;
 
         projectile.gameObject.SetActive(true);
-        projectile.transform.position = spawnPosition;
         projectile.Initialize(config, spawnPosition, damage);
         
         projectileCallbacks[projectile] = callback;
@@ -145,7 +144,6 @@ public class ProjectileManager : MonoBehaviour
         Vector3 spawnPosition = spawnPoint != null ? spawnPoint.position : Vector3.zero;
 
         projectile.gameObject.SetActive(true);
-        projectile.transform.position = spawnPosition;
         projectile.Initialize(config, spawnPosition, damage);
         activeProjectile = projectile;
 
