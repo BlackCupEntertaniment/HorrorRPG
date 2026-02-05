@@ -5,7 +5,6 @@ public class DefenseRegionData
 {
     public DefensePosition position;
     public float defenseTimer;
-    public bool isCharging;
     public bool isActive;
 
     private const float MAX_DEFENSE_TIME = 1.0f;
@@ -14,49 +13,50 @@ public class DefenseRegionData
     {
         position = pos;
         defenseTimer = 0f;
-        isCharging = false;
         isActive = false;
     }
 
-    public void StartCharging()
+    public void Activate()
     {
-        isCharging = true;
-    }
-
-    public void StopCharging()
-    {
-        if (isCharging && defenseTimer > 0f)
-        {
-            isActive = true;
-        }
-        isCharging = false;
+        isActive = true;
+        defenseTimer = 0f;
     }
 
     public void UpdateTimer(float deltaTime)
     {
-        if (isCharging)
+        if (isActive)
         {
-            defenseTimer = Mathf.Min(defenseTimer + deltaTime, MAX_DEFENSE_TIME);
+            defenseTimer += deltaTime;
+            
+            if (defenseTimer >= MAX_DEFENSE_TIME)
+            {
+                Reset();
+            }
         }
     }
 
     public void Reset()
     {
         defenseTimer = 0f;
-        isCharging = false;
         isActive = false;
     }
 
     public float GetDamageMultiplier()
     {
-        if (!isActive || defenseTimer <= 0f)
+        if (!isActive)
             return 1.0f;
 
-        return 1.0f - (defenseTimer / MAX_DEFENSE_TIME);
+        float normalizedTime = defenseTimer / MAX_DEFENSE_TIME;
+        
+        if (normalizedTime < 0.1f) return 1.0f;
+        if (normalizedTime < 0.4f) return 0.5f;
+        if (normalizedTime < 0.6f) return 0.0f;
+        if (normalizedTime < 0.9f) return 0.5f;
+        return 1.0f;
     }
 
     public bool HasDefense()
     {
-        return isActive && defenseTimer > 0f;
+        return isActive;
     }
 }

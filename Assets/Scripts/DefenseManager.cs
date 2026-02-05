@@ -86,22 +86,14 @@ public class DefenseManager : MonoBehaviour
 
         if (Input.GetKeyDown(key))
         {
-            if (!region.isCharging && globalCooldownTimer <= 0f)
+            if (!region.isActive && globalCooldownTimer <= 0f)
             {
-                region.StartCharging();
-                Debug.Log($"Defesa {position} iniciada!");
-            }
-        }
-        else if (Input.GetKeyUp(key))
-        {
-            if (region.isCharging)
-            {
-                region.StopCharging();
+                region.Activate();
                 globalCooldownTimer = globalCooldown;
                 
                 PlayDefenseAnimation(position);
                 
-                Debug.Log($"Defesa {position} ativada! Timer: {region.defenseTimer:F2}s");
+                Debug.Log($"Defesa {position} ativada! Timer iniciado.");
             }
         }
     }
@@ -156,12 +148,24 @@ public class DefenseManager : MonoBehaviour
         float damageMultiplier = region.GetDamageMultiplier();
         int finalDamage = Mathf.CeilToInt(baseDamage * damageMultiplier);
         
+        float normalizedTime = region.defenseTimer / 1.0f;
         float defensePercent = (1.0f - damageMultiplier) * 100f;
-        Debug.Log($"Projétil atingiu {position} - Defesa {defensePercent:F0}% (Timer: {region.defenseTimer:F2}s) - Dano: {finalDamage}/{baseDamage}");
+        
+        string timingQuality = GetTimingQuality(normalizedTime);
+        Debug.Log($"Projétil atingiu {position} - {timingQuality} (Timer: {normalizedTime:P0}) - Bloqueio {defensePercent:F0}% - Dano: {finalDamage}/{baseDamage}");
         
         region.Reset();
         
         return finalDamage;
+    }
+
+    private string GetTimingQuality(float normalizedTime)
+    {
+        if (normalizedTime < 0.1f) return "MUITO CEDO";
+        if (normalizedTime < 0.4f) return "CEDO";
+        if (normalizedTime < 0.6f) return "PERFEITO";
+        if (normalizedTime < 0.9f) return "TARDE";
+        return "MUITO TARDE";
     }
 
     public void ResetAllDefenses()
