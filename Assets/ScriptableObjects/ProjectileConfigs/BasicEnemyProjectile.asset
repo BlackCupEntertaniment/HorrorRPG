@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loopRadius: 0.85
   loopSpeed: 5
-  minLoopTime: 4
-  maxLoopTime: 6
-  minTravelSpeed: 3
-  maxTravelSpeed: 8
+  minLoopTime: 3
+  maxLoopTime: 3
+  minTravelSpeed: 2
+  maxTravelSpeed: 6
   projectileMaterial: {fileID: 2100000, guid: 6934c8ed60baa3b47979f33eae300dab, type: 2}

@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [CreateAssetMenu(fileName = "New Enemy", menuName = "Battle/Enemy")]
 public class EnemyData : ScriptableObject
@@ -11,6 +12,28 @@ public class EnemyData : ScriptableObject
     public int baseDamage = 10;
     public EnemyType category = EnemyType.None;
     
-    [Header("Projectile Attack")]
-    public ProjectileConfig projectileConfig;
+    [Header("Attack System")]
+    [Tooltip("Lista de ataques disponíveis para este inimigo")]
+    public List<AttackData> availableAttacks = new List<AttackData>();
+    
+    public AttackData GetRandomAttack()
+    {
+        if (availableAttacks == null || availableAttacks.Count == 0)
+            return null;
+        
+        List<AttackData> validAttacks = new List<AttackData>();
+        foreach (var attack in availableAttacks)
+        {
+            if (attack != null && attack.IsValid())
+            {
+                validAttacks.Add(attack);
+            }
+        }
+        
+        if (validAttacks.Count == 0)
+            return null;
+        
+        int randomIndex = Random.Range(0, validAttacks.Count);
+        return validAttacks[randomIndex];
+    }
 }

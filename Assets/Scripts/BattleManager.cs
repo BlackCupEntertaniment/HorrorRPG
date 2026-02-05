@@ -158,17 +158,16 @@ public class BattleManager : MonoBehaviour
             DefenseManager.Instance.EnableDefense(true);
         }
 
-        if (currentEnemyData.projectileConfig != null && ProjectileManager.Instance != null)
+        AttackData selectedAttack = currentEnemyData.GetRandomAttack();
+
+        if (selectedAttack != null && ProjectileManager.Instance != null)
         {
-            int finalDamage = enemyDamage;
-            DefenseType defenseType = DefenseType.None;
-            bool damageApplied = false;
+            int projectilesHit = 0;
+            int totalProjectiles = selectedAttack.GetProjectileCount();
 
             ProjectileManager.Instance.SetDamageCallback((damage, defense) =>
             {
-                finalDamage = damage;
-                defenseType = defense;
-                damageApplied = true;
+                projectilesHit++;
 
                 if (PlayerStats.Instance != null && damage > 0)
                 {
@@ -176,7 +175,7 @@ public class BattleManager : MonoBehaviour
 
                     if (BattlePlayerEffects.Instance != null)
                     {
-                        BattlePlayerEffects.Instance.PlayDamageEffects(defenseType);
+                        BattlePlayerEffects.Instance.PlayDamageEffects(defense);
                     }
 
                     Debug.Log($"Projétil causou {damage} de dano!");
@@ -198,13 +197,10 @@ public class BattleManager : MonoBehaviour
             });
 
             yield return StartCoroutine(
-                ProjectileManager.Instance.ExecuteProjectileAttack(currentEnemyData.projectileConfig, enemyDamage)
+                ProjectileManager.Instance.ExecuteAttack(selectedAttack, enemyDamage)
             );
 
-            while (!damageApplied)
-            {
-                yield return null;
-            }
+            Debug.Log($"Ataque '{selectedAttack.attackName}' concluído! {projectilesHit}/{totalProjectiles} projéteis atingiram o alvo.");
         }
         else
         {

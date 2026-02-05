@@ -10,7 +10,7 @@ public class EnemyDataEditor : Editor
     private SerializedProperty maxHealthProp;
     private SerializedProperty baseDamageProp;
     private SerializedProperty categoryProp;
-    private SerializedProperty projectileConfigProp;
+    private SerializedProperty availableAttacksProp;
     
     private bool showWeaponPreview = true;
     private bool showValidation = true;
@@ -22,7 +22,7 @@ public class EnemyDataEditor : Editor
         maxHealthProp = serializedObject.FindProperty("maxHealth");
         baseDamageProp = serializedObject.FindProperty("baseDamage");
         categoryProp = serializedObject.FindProperty("category");
-        projectileConfigProp = serializedObject.FindProperty("projectileConfig");
+        availableAttacksProp = serializedObject.FindProperty("availableAttacks");
     }
 
     public override void OnInspectorGUI()
@@ -60,8 +60,11 @@ public class EnemyDataEditor : Editor
         EditorGUILayout.PropertyField(categoryProp);
         
         EditorGUILayout.Space(5);
-        EditorGUILayout.LabelField("Projectile Attack", EditorStyles.miniBoldLabel);
-        EditorGUILayout.PropertyField(projectileConfigProp, new GUIContent("Projectile Config"));
+        EditorGUILayout.LabelField("Attack System", EditorStyles.miniBoldLabel);
+        if (availableAttacksProp != null)
+        {
+            EditorGUILayout.PropertyField(availableAttacksProp, new GUIContent("Available Attacks"), true);
+        }
         
         EditorGUI.indentLevel--;
     }
