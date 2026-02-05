@@ -20,7 +20,7 @@ public class ProjectileManager : MonoBehaviour
 
     private List<BattleProjectile> projectilePool = new List<BattleProjectile>();
     private BattleProjectile activeProjectile;
-    private System.Action<int> onProjectileResolved;
+    private System.Action<int, DefenseType> onProjectileResolved;
 
     private void Awake()
     {
@@ -61,7 +61,7 @@ public class ProjectileManager : MonoBehaviour
         if (projectile == null)
         {
             Debug.LogError("Nenhum projétil disponível no pool!");
-            onProjectileResolved?.Invoke(damage);
+            onProjectileResolved?.Invoke(damage, DefenseType.None);
             yield break;
         }
 
@@ -114,13 +114,15 @@ public class ProjectileManager : MonoBehaviour
         int baseDamage = projectile.DamageAmount;
         
         int finalDamage = baseDamage;
+        DefenseType defenseType = DefenseType.None;
+        
         if (DefenseManager.Instance != null)
         {
-            finalDamage = DefenseManager.Instance.OnProjectileHit(position, baseDamage);
+            finalDamage = DefenseManager.Instance.OnProjectileHit(position, baseDamage, out defenseType);
         }
 
         projectile.HitTarget();
-        onProjectileResolved?.Invoke(finalDamage);
+        onProjectileResolved?.Invoke(finalDamage, defenseType);
     }
 
     private Transform GetTargetTransform(DefensePosition position)
@@ -167,7 +169,7 @@ public class ProjectileManager : MonoBehaviour
         }
     }
 
-    public void SetDamageCallback(System.Action<int> callback)
+    public void SetDamageCallback(System.Action<int, DefenseType> callback)
     {
         onProjectileResolved = callback;
     }

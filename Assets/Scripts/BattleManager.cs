@@ -161,11 +161,13 @@ public class BattleManager : MonoBehaviour
         if (currentEnemyData.projectileConfig != null && ProjectileManager.Instance != null)
         {
             int finalDamage = enemyDamage;
+            DefenseType defenseType = DefenseType.None;
             bool damageApplied = false;
 
-            ProjectileManager.Instance.SetDamageCallback((damage) =>
+            ProjectileManager.Instance.SetDamageCallback((damage, defense) =>
             {
                 finalDamage = damage;
+                defenseType = defense;
                 damageApplied = true;
 
                 if (PlayerStats.Instance != null && damage > 0)
@@ -174,13 +176,18 @@ public class BattleManager : MonoBehaviour
 
                     if (BattlePlayerEffects.Instance != null)
                     {
-                        BattlePlayerEffects.Instance.PlayDamageEffects();
+                        BattlePlayerEffects.Instance.PlayDamageEffects(defenseType);
                     }
 
                     Debug.Log($"Projétil causou {damage} de dano!");
                 }
                 else if (damage == 0)
                 {
+                    if (BattlePlayerEffects.Instance != null)
+                    {
+                        BattlePlayerEffects.Instance.PlayDamageEffects(DefenseType.Perfect);
+                    }
+
                     Debug.Log("Projétil bloqueado! Nenhum dano recebido.");
                 }
 

@@ -129,11 +129,12 @@ public class DefenseManager : MonoBehaviour
         Debug.Log($"Sistema de defesa {(enable ? "ativado" : "desativado")}");
     }
 
-    public int OnProjectileHit(DefensePosition position, int baseDamage)
+    public int OnProjectileHit(DefensePosition position, int baseDamage, out DefenseType defenseType)
     {
         if (!defenseRegions.ContainsKey(position))
         {
             Debug.LogError($"Posição de defesa inválida: {position}");
+            defenseType = DefenseType.None;
             return baseDamage;
         }
 
@@ -142,6 +143,7 @@ public class DefenseManager : MonoBehaviour
         if (!region.HasDefense())
         {
             Debug.Log($"Projétil atingiu {position} - Sem defesa! Dano total: {baseDamage}");
+            defenseType = DefenseType.None;
             return baseDamage;
         }
 
@@ -151,12 +153,24 @@ public class DefenseManager : MonoBehaviour
         float normalizedTime = region.defenseTimer / 1.0f;
         float defensePercent = (1.0f - damageMultiplier) * 100f;
         
+        defenseType = GetDefenseType(damageMultiplier);
+        
         string timingQuality = GetTimingQuality(normalizedTime);
         Debug.Log($"Projétil atingiu {position} - {timingQuality} (Timer: {normalizedTime:P0}) - Bloqueio {defensePercent:F0}% - Dano: {finalDamage}/{baseDamage}");
         
         region.Reset();
         
         return finalDamage;
+    }
+
+    private DefenseType GetDefenseType(float damageMultiplier)
+    {
+        if (damageMultiplier <= 0.0f)
+            return DefenseType.Perfect;
+        else if (damageMultiplier < 1.0f)
+            return DefenseType.Partial;
+        else
+            return DefenseType.None;
     }
 
     private string GetTimingQuality(float normalizedTime)

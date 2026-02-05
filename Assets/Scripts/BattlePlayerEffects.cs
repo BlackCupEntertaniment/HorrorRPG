@@ -2,6 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
+public enum DefenseType
+{
+    None,
+    Partial,
+    Perfect
+}
+
 public class BattlePlayerEffects : MonoBehaviour
 {
     public static BattlePlayerEffects Instance { get; private set; }
@@ -10,6 +17,11 @@ public class BattlePlayerEffects : MonoBehaviour
     [SerializeField] private Image damageFlashImage;
     [SerializeField] private float flashDuration = 0.3f;
     [SerializeField] private float flashAlpha = 0.5f;
+
+    [Header("Flash Colors")]
+    [SerializeField] private Color damageColor = Color.red;
+    [SerializeField] private Color partialDefenseColor = new Color(1f, 0.5f, 0.5f);
+    [SerializeField] private Color perfectDefenseColor = Color.white;
 
     [Header("Camera Shake Settings")]
     [SerializeField] private bool enableCameraShake = false;
@@ -39,9 +51,9 @@ public class BattlePlayerEffects : MonoBehaviour
         }
     }
 
-    public void PlayDamageEffects()
+    public void PlayDamageEffects(DefenseType defenseType = DefenseType.None)
     {
-        PlayDamageFlash();
+        PlayDamageFlash(defenseType);
         
         if (enableCameraShake)
         {
@@ -49,7 +61,7 @@ public class BattlePlayerEffects : MonoBehaviour
         }
     }
 
-    public void PlayDamageFlash()
+    public void PlayDamageFlash(DefenseType defenseType = DefenseType.None)
     {
         if (damageFlashImage == null)
             return;
@@ -59,7 +71,14 @@ public class BattlePlayerEffects : MonoBehaviour
             StopCoroutine(damageFlashCoroutine);
         }
 
-        damageFlashCoroutine = StartCoroutine(DamageFlashCoroutine());
+        Color flashColor = defenseType switch
+        {
+            DefenseType.Partial => partialDefenseColor,
+            DefenseType.Perfect => perfectDefenseColor,
+            _ => damageColor
+        };
+
+        damageFlashCoroutine = StartCoroutine(DamageFlashCoroutine(flashColor));
     }
 
     public void PlayCameraShake()
@@ -71,10 +90,9 @@ public class BattlePlayerEffects : MonoBehaviour
         }
     }
 
-    private IEnumerator DamageFlashCoroutine()
+    private IEnumerator DamageFlashCoroutine(Color flashColor)
     {
         float elapsedTime = 0f;
-        Color color = damageFlashImage.color;
 
         while (elapsedTime < flashDuration)
         {
@@ -82,14 +100,16 @@ public class BattlePlayerEffects : MonoBehaviour
             float normalizedTime = elapsedTime / flashDuration;
             float alpha = Mathf.Lerp(flashAlpha, 0f, normalizedTime);
             
+            Color color = flashColor;
             color.a = alpha;
             damageFlashImage.color = color;
             
             yield return null;
         }
 
-        color.a = 0f;
-        damageFlashImage.color = color;
+        Color finalColor = flashColor;
+        finalColor.a = 0f;
+        damageFlashImage.color = finalColor;
         damageFlashCoroutine = null;
     }
 }
