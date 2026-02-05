@@ -1915,6 +1915,26 @@ Transform:
   m_Children: []
   m_Father: {fileID: 648655060}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1359376206 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4744666841221693462, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+  m_PrefabInstance: {fileID: 136841728765865573}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1359376212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1359376206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d535fd737c7dc7c41973bf28891be316, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  leftHandEffect: {fileID: 1971992689}
+  middleHandEffect: {fileID: 386657064}
+  rightHandEffect: {fileID: 38559161}
 --- !u!1 &1362066230
 GameObject:
   m_ObjectHideFlags: 0
@@ -3464,6 +3484,30 @@ PrefabInstance:
       propertyPath: screenShake
       value: 
       objectReference: {fileID: 1876825795}
+    - target: {fileID: 77587432472779947, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: partialDefenseColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 77587432472779947, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: partialDefenseColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 77587432472779947, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: partialDefenseColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 77587432472779947, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: perfectDefenseColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 77587432472779947, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: perfectDefenseColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 77587432472779947, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      propertyPath: perfectDefenseColor.r
+      value: 0.9307399
+      objectReference: {fileID: 0}
     - target: {fileID: 259875391655134467, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4129,6 +4173,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1224750520}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4744666841221693462, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1359376212}
     - targetCorrespondingSourceObject: {fileID: 6246502560978529149, guid: d52880c7a0a358a4e9c81e9cd4e89dcd, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1971992689}

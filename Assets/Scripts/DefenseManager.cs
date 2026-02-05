@@ -100,6 +100,8 @@ public class DefenseManager : MonoBehaviour
 
     private void PlayDefenseAnimation(DefensePosition position)
     {
+        DefenseEffectsManager.Instance?.TriggerEffect(position);
+        
         if (HandAnimationManager.Instance != null)
         {
             switch (position)
