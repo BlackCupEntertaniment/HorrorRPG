@@ -153,6 +153,11 @@ public class BattleManager : MonoBehaviour
     {
         int enemyDamage = currentEnemyData.baseDamage;
 
+        if (DefenseManager.Instance != null)
+        {
+            DefenseManager.Instance.EnableDefense(true);
+        }
+
         if (currentEnemyData.projectileConfig != null && ProjectileManager.Instance != null)
         {
             int finalDamage = enemyDamage;
@@ -212,6 +217,11 @@ public class BattleManager : MonoBehaviour
             {
                 BattleUIManager.Instance.UpdateHealthBars();
             }
+        }
+
+        if (DefenseManager.Instance != null)
+        {
+            DefenseManager.Instance.EnableDefense(false);
         }
     }
 

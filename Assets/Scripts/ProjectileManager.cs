@@ -2,14 +2,6 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-public enum DefenseResult
-{
-    Perfect,
-    Partial,
-    Failed,
-    TooLate
-}
-
 public class ProjectileManager : MonoBehaviour
 {
     public static ProjectileManager Instance { get; private set; }
@@ -22,23 +14,12 @@ public class ProjectileManager : MonoBehaviour
     [SerializeField] private Transform upTarget;
     [SerializeField] private Transform rightTarget;
 
-    [Header("Defense Distances")]
-    [SerializeField] private float perfectDefenseDistance = 0.5f;
-    [SerializeField] private float partialDefenseDistance = 1.5f;
-
     [Header("Pool Settings")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private int poolSize = 10;
 
-    [Header("Defense Effect UI")]
-    [SerializeField] private DefenseEffectUI leftDefenseEffect;
-    [SerializeField] private DefenseEffectUI middleDefenseEffect;
-    [SerializeField] private DefenseEffectUI rightDefenseEffect;
-
     private List<BattleProjectile> projectilePool = new List<BattleProjectile>();
     private BattleProjectile activeProjectile;
-    private bool canDefend;
-    private bool defenseBlocked;
     private System.Action<int> onProjectileResolved;
 
     private void Awake()
@@ -72,28 +53,10 @@ public class ProjectileManager : MonoBehaviour
 
     private void Update()
     {
-        if (!canDefend || activeProjectile == null || defenseBlocked)
-            return;
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            AttemptDefense(DefensePosition.Left);
-        }
-        else if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            AttemptDefense(DefensePosition.Up);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            AttemptDefense(DefensePosition.Right);
-        }
     }
 
     public IEnumerator ExecuteProjectileAttack(ProjectileConfig config, int damage)
     {
-        defenseBlocked = false;
-        canDefend = false;
-
         BattleProjectile projectile = GetProjectileFromPool();
         if (projectile == null)
         {
@@ -114,18 +77,12 @@ public class ProjectileManager : MonoBehaviour
             yield return null;
         }
 
-        if (activeProjectile != null && activeProjectile.CurrentState == ProjectileState.Traveling)
-        {
-            canDefend = true;
-        }
-
         while (activeProjectile != null && 
                activeProjectile.CurrentState == ProjectileState.Traveling)
         {
             yield return null;
         }
 
-        canDefend = false;
         activeProjectile = null;
     }
 
@@ -153,105 +110,17 @@ public class ProjectileManager : MonoBehaviour
         if (projectile != activeProjectile)
             return;
 
+        DefensePosition position = projectile.TargetPosition;
+        int baseDamage = projectile.DamageAmount;
+        
+        int finalDamage = baseDamage;
+        if (DefenseManager.Instance != null)
+        {
+            finalDamage = DefenseManager.Instance.OnProjectileHit(position, baseDamage);
+        }
+
         projectile.HitTarget();
-        onProjectileResolved?.Invoke(projectile.DamageAmount);
-    }
-
-    private void AttemptDefense(DefensePosition inputPosition)
-    {
-        if (activeProjectile == null)
-            return;
-
-        if (inputPosition != activeProjectile.TargetPosition)
-        {
-            return;
-        }
-
-        PlayDefenseAnimation(inputPosition);
-
-        float distance = activeProjectile.GetDistanceToTarget();
-        DefenseResult result = EvaluateDefense(distance);
-
-        switch (result)
-        {
-            case DefenseResult.Perfect:
-                activeProjectile.BlockProjectile();
-                onProjectileResolved?.Invoke(0);
-                Debug.Log("Defesa Perfeita! Dano negado.");
-                break;
-
-            case DefenseResult.Partial:
-                activeProjectile.BlockProjectile();
-                int halfDamage = Mathf.CeilToInt(activeProjectile.DamageAmount * 0.5f);
-                onProjectileResolved?.Invoke(halfDamage);
-                Debug.Log($"Defesa Parcial! Dano reduzido para {halfDamage}.");
-                break;
-
-            case DefenseResult.Failed:
-                defenseBlocked = true;
-                Debug.Log("Defesa Falhou! Player bloqueado de defender novamente.");
-                break;
-
-            case DefenseResult.TooLate:
-                Debug.Log("Muito tarde para defender!");
-                break;
-        }
-    }
-
-    private void PlayDefenseAnimation(DefensePosition position)
-    {
-        if (HandAnimationManager.Instance != null)
-        {
-            switch (position)
-            {
-                case DefensePosition.Left:
-                    HandAnimationManager.Instance.PlayReachAnimationLeftHand();
-                    break;
-                case DefensePosition.Up:
-                    HandAnimationManager.Instance.PlayReachAnimation();
-                    break;
-                case DefensePosition.Right:
-                    HandAnimationManager.Instance.PlayReachAnimationRightHand();
-                    break;
-            }
-        }
-
-        DefenseEffectUI effectComponent = GetDefenseEffectComponent(position);
-        if (effectComponent != null)
-        {
-            effectComponent.Trigger();
-        }
-    }
-
-    private DefenseEffectUI GetDefenseEffectComponent(DefensePosition position)
-    {
-        switch (position)
-        {
-            case DefensePosition.Left:
-                return leftDefenseEffect;
-            case DefensePosition.Up:
-                return middleDefenseEffect;
-            case DefensePosition.Right:
-                return rightDefenseEffect;
-            default:
-                return null;
-        }
-    }
-
-    private DefenseResult EvaluateDefense(float distance)
-    {
-        if (distance <= perfectDefenseDistance)
-        {
-            return DefenseResult.Perfect;
-        }
-        else if (distance <= partialDefenseDistance)
-        {
-            return DefenseResult.Partial;
-        }
-        else
-        {
-            return DefenseResult.Failed;
-        }
+        onProjectileResolved?.Invoke(finalDamage);
     }
 
     private Transform GetTargetTransform(DefensePosition position)

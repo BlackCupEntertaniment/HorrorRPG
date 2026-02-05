@@ -5,7 +5,6 @@ public enum ProjectileState
 {
     Looping,
     Traveling,
-    Blocked,
     Hit
 }
 
@@ -65,12 +64,6 @@ public class BattleProjectile : MonoBehaviour
         targetPosition = position;
         currentState = ProjectileState.Traveling;
         initialDistanceToTarget = Vector3.Distance(transform.position, targetTransform.position);
-    }
-
-    public void BlockProjectile()
-    {
-        currentState = ProjectileState.Blocked;
-        ReturnToPool();
     }
 
     public void HitTarget()
