@@ -147,6 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7902896265959316450}
   - component: {fileID: 4723024182714401279}
+  - component: {fileID: 800334300663151331}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -187,6 +188,22 @@ MonoBehaviour:
   battleEnemyRenderer: {fileID: 5550823111110114375}
   battleEnemyEffects: {fileID: 7670418945173382487}
   currentEnemyData: {fileID: 0}
+--- !u!114 &800334300663151331
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414393569728378697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 919e5e7616ed54f4396478bc354b60e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  globalCooldown: 0.5
+  leftDefenseKey: 276
+  upDefenseKey: 273
+  rightDefenseKey: 275
 --- !u!1 &1431185925796793118
 GameObject:
   m_ObjectHideFlags: 0
@@ -1396,8 +1413,6 @@ MonoBehaviour:
   leftTarget: {fileID: 3440674696582133470}
   upTarget: {fileID: 4430698735466633739}
   rightTarget: {fileID: 4228272962326386449}
-  perfectDefenseDistance: 0.5
-  partialDefenseDistance: 1.5
   projectilePrefab: {fileID: 8765078216248012346, guid: ecfc368d9771d8646b16e0572f8d7cf6, type: 3}
   poolSize: 10
 --- !u!1 &8797467464674155740

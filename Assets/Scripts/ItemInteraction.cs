@@ -21,6 +21,11 @@ public class ItemInteraction : MonoBehaviour, IInteractable
 
     private IEnumerator InteractCoroutine()
     {
+        if (PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.LockControl("ItemPickup");
+        }
+        
         if (InventoryManager.Instance != null && itemData != null)
         {
             yield return InventoryManager.Instance.AddItemCoroutine(itemData, quantity);
@@ -36,6 +41,11 @@ public class ItemInteraction : MonoBehaviour, IInteractable
                     Destroy(gameObject);
                 }
             }
+        }
+        
+        if (PlayerControlManager.Instance != null)
+        {
+            PlayerControlManager.Instance.UnlockControl("ItemPickup");
         }
     }
 
