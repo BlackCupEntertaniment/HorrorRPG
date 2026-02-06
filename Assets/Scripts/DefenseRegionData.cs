@@ -48,10 +48,10 @@ public class DefenseRegionData
 
         float normalizedTime = defenseTimer / MAX_DEFENSE_TIME;
         
-        if (normalizedTime < 0.1f) return 1.0f;
-        if (normalizedTime < 0.4f) return 0.5f;
-        if (normalizedTime < 0.6f) return 0.0f;
-        if (normalizedTime < 0.9f) return 0.5f;
+        if (normalizedTime < 0.1f) return 0.0f;
+        if (normalizedTime < 0.2f) return 0.5f;
+        if (normalizedTime < 0.6f) return 1.0f;
+        if (normalizedTime < 0.9f) return 1.5f;
         return 1.0f;
     }
 

@@ -177,10 +177,10 @@ public class DefenseManager : MonoBehaviour
 
     private string GetTimingQuality(float normalizedTime)
     {
-        if (normalizedTime < 0.1f) return "MUITO CEDO";
-        if (normalizedTime < 0.4f) return "CEDO";
-        if (normalizedTime < 0.6f) return "PERFEITO";
-        if (normalizedTime < 0.9f) return "TARDE";
+        if (normalizedTime < 0.15f) return "MUITO CEDO";
+        if (normalizedTime < 0.375f) return "CEDO";
+        if (normalizedTime < 0.625f) return "PERFEITO";
+        if (normalizedTime < 0.85f) return "TARDE";
         return "MUITO TARDE";
     }
 
