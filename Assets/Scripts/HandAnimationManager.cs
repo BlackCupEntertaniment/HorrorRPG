@@ -11,15 +11,16 @@ public class HandAnimationManager : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private UISpriteAnimation reachAnimation;
 
-    [Header("Walk Animation Settings")]
-    [SerializeField] private float walkBounceHeight = 10f;
-    [SerializeField] private float walkSpeed = 2f;
+    [Header("Swing Animation Settings")]
+    [SerializeField] private float swingAmplitudeX = 15f;
+    [SerializeField] private float swingAmplitudeY = 10f;
+    [SerializeField] private float swingSpeed = 2f;
     [SerializeField] private float returnToDefaultSpeed = 5f;
-
-    private const float DEFAULT_ANCHOR_Y = 0f;
 
     private RectTransform leftHandRect;
     private RectTransform rightHandRect;
+    private Vector2 leftHandDefaultPosition;
+    private Vector2 rightHandDefaultPosition;
     private bool isWalking;
     private float walkTimer;
 
@@ -36,10 +37,16 @@ public class HandAnimationManager : MonoBehaviour
         }
 
         if (leftHandAnimator != null)
+        {
             leftHandRect = leftHandAnimator.GetComponent<RectTransform>();
+            leftHandDefaultPosition = leftHandRect.anchoredPosition;
+        }
 
         if (rightHandAnimator != null)
+        {
             rightHandRect = rightHandAnimator.GetComponent<RectTransform>();
+            rightHandDefaultPosition = rightHandRect.anchoredPosition;
+        }
     }
 
     private void Update()
@@ -106,47 +113,50 @@ public class HandAnimationManager : MonoBehaviour
 
     private void AnimateWalk()
     {
-        walkTimer += Time.deltaTime * walkSpeed;
-        float bounceOffset = Mathf.Sin(walkTimer) * walkBounceHeight;
+        walkTimer += Time.deltaTime * swingSpeed;
+
+        float swingX = Mathf.Sin(walkTimer) * swingAmplitudeX;
+        float swingY = Mathf.Abs(Mathf.Sin(walkTimer)) * swingAmplitudeY;
 
         if (leftHandRect != null)
         {
             Vector2 anchoredPos = leftHandRect.anchoredPosition;
-            anchoredPos.y = bounceOffset;
+            anchoredPos.x = leftHandDefaultPosition.x + swingX;
+            anchoredPos.y = leftHandDefaultPosition.y + swingY;
             leftHandRect.anchoredPosition = anchoredPos;
         }
 
         if (rightHandRect != null)
         {
             Vector2 anchoredPos = rightHandRect.anchoredPosition;
-            anchoredPos.y = bounceOffset;
+            anchoredPos.x = rightHandDefaultPosition.x + swingX;
+            anchoredPos.y = rightHandDefaultPosition.y + swingY;
             rightHandRect.anchoredPosition = anchoredPos;
         }
     }
 
     private void ReturnToDefaultPosition()
     {
-        bool leftReturned = MoveTowardDefaultY(leftHandRect);
-        bool rightReturned = MoveTowardDefaultY(rightHandRect);
+        bool leftReturned = MoveTowardDefault(leftHandRect, leftHandDefaultPosition);
+        bool rightReturned = MoveTowardDefault(rightHandRect, rightHandDefaultPosition);
     }
 
-    private bool MoveTowardDefaultY(RectTransform rectTransform)
+    private bool MoveTowardDefault(RectTransform rectTransform, Vector2 defaultPos)
     {
         if (rectTransform == null)
             return true;
 
         Vector2 anchoredPos = rectTransform.anchoredPosition;
 
-        if (Mathf.Approximately(anchoredPos.y, DEFAULT_ANCHOR_Y))
+        if (Vector2.Distance(anchoredPos, defaultPos) < 0.01f)
+        {
+            rectTransform.anchoredPosition = defaultPos;
             return true;
+        }
 
-        anchoredPos.y = Mathf.Lerp(anchoredPos.y, DEFAULT_ANCHOR_Y, Time.deltaTime * returnToDefaultSpeed);
-
-        if (Mathf.Abs(anchoredPos.y - DEFAULT_ANCHOR_Y) < 0.01f)
-            anchoredPos.y = DEFAULT_ANCHOR_Y;
-
+        anchoredPos = Vector2.Lerp(anchoredPos, defaultPos, Time.deltaTime * returnToDefaultSpeed);
         rectTransform.anchoredPosition = anchoredPos;
 
-        return Mathf.Approximately(anchoredPos.y, DEFAULT_ANCHOR_Y);
+        return false;
     }
 }
