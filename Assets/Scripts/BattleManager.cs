@@ -32,6 +32,10 @@ public class BattleManager : MonoBehaviour
     private bool isProcessingTurn = false;
     private int currentEnemyHealth;
 
+    private int damageBuffValue = 0;
+    private bool hasDamageBuff = false;
+    private float markerSpeedModifier = 1f;
+
     public EnemyData CurrentEnemyData => currentEnemyData;
     public int CurrentEnemyHealth => currentEnemyHealth;
     public bool IsProcessingTurn => isProcessingTurn;
@@ -155,6 +159,15 @@ public class BattleManager : MonoBehaviour
         yield return new WaitUntil(() => timingComplete);
 
         int damage = weapon.GetDamageByResult(result, currentEnemyData.category);
+        
+        if (hasDamageBuff)
+        {
+            damage += damageBuffValue;
+            hasDamageBuff = false;
+            damageBuffValue = 0;
+            Debug.Log($"Buff de dano aplicado! Dano aumentado em {damageBuffValue}");
+        }
+        
         currentEnemyHealth = Mathf.Max(0, currentEnemyHealth - damage);
 
         if (battleEnemyEffects != null && result != AttackResult.Miss)
@@ -316,5 +329,75 @@ public class BattleManager : MonoBehaviour
     public bool IsInBattle()
     {
         return isInBattle;
+    }
+
+    public void PlayerUseItem(ConsumableData consumable)
+    {
+        if (isProcessingTurn || !isInBattle)
+            return;
+
+        StartCoroutine(ProcessItemUsage(consumable));
+    }
+
+    private IEnumerator ProcessItemUsage(ConsumableData consumable)
+    {
+        isProcessingTurn = true;
+
+        if (BattleUIManager.Instance != null)
+        {
+            BattleUIManager.Instance.HideAllMenus();
+        }
+
+        switch (consumable.effectType)
+        {
+            case ConsumableEffectType.HealHealth:
+                if (PlayerStats.Instance != null)
+                {
+                    PlayerStats.Instance.Heal(consumable.effectValue);
+                    Debug.Log($"Item usado! Vida restaurada em {consumable.effectValue} pontos.");
+                }
+                break;
+
+            case ConsumableEffectType.IncreaseDamage:
+                damageBuffValue = consumable.effectValue;
+                hasDamageBuff = true;
+                Debug.Log($"Item usado! Próximo ataque terá {consumable.effectValue} de dano adicional.");
+                break;
+
+            case ConsumableEffectType.DecreaseMarkerSpeed:
+                markerSpeedModifier = 1f - (consumable.effectValue / 100f);
+                if (AttackTimingBar.Instance != null)
+                {
+                    AttackTimingBar.Instance.SetSpeedModifier(markerSpeedModifier);
+                }
+                Debug.Log($"Item usado! Velocidade do marker reduzida em {consumable.effectValue}%.");
+                break;
+        }
+
+        if (BattleUIManager.Instance != null)
+        {
+            BattleUIManager.Instance.UpdateHealthBars();
+        }
+
+        yield return new WaitForSeconds(TURN_DELAY);
+
+        yield return StartCoroutine(ProcessEnemyAttack());
+
+        if (PlayerStats.Instance != null && !PlayerStats.Instance.IsAlive())
+        {
+            Debug.Log("Player derrotado!");
+            yield return new WaitForSeconds(TURN_DELAY);
+            EndBattle();
+            yield break;
+        }
+
+        yield return new WaitForSeconds(TURN_DELAY);
+
+        isProcessingTurn = false;
+
+        if (BattleUIManager.Instance != null)
+        {
+            BattleUIManager.Instance.OpenMainMenu();
+        }
     }
 }

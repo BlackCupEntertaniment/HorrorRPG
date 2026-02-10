@@ -9,6 +9,8 @@ public class ItemSlotUI : MonoBehaviour
     [SerializeField] private Image backgroundImage;
 
     private InventorySlot currentSlot;
+    private ItemData currentItemData;
+    private int currentQuantity;
     private InventoryManager inventoryManager;
     private Color defaultNameColor = Color.white;
     private Color defaultAmountColor = Color.white;
@@ -37,11 +39,32 @@ public class ItemSlotUI : MonoBehaviour
     {
         currentSlot = slot;
         inventoryManager = manager;
+        currentItemData = slot?.itemData;
+        currentQuantity = slot?.quantity ?? 0;
 
         if (slot != null && slot.itemData != null)
         {
             itemNameText.text = slot.itemData.itemName;
             itemAmountText.text = "x" + slot.quantity.ToString();
+            gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    public void Setup(ItemData item, int quantity)
+    {
+        currentItemData = item;
+        currentQuantity = quantity;
+        currentSlot = null;
+        inventoryManager = null;
+
+        if (item != null)
+        {
+            itemNameText.text = item.itemName;
+            itemAmountText.text = "x" + quantity.ToString();
             gameObject.SetActive(true);
         }
         else
@@ -79,6 +102,16 @@ public class ItemSlotUI : MonoBehaviour
     public InventorySlot GetSlot()
     {
         return currentSlot;
+    }
+
+    public ItemData GetItemData()
+    {
+        return currentItemData;
+    }
+
+    public int GetQuantity()
+    {
+        return currentQuantity;
     }
 
     public int GetSlotIndex()

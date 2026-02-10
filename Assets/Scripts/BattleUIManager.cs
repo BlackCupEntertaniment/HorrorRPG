@@ -10,7 +10,9 @@ public class BattleUIManager : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private GameObject battleMainMenuBackground;
     [SerializeField] private GameObject attackMenuBackground;
+    [SerializeField] private GameObject itensMenuBackground;
     [SerializeField] private GameObject emptyMessage;
+    [SerializeField] private GameObject emptyMessageItems;
     
     [Header("Main Menu Buttons")]
     [SerializeField] private SelectableButton attackButton;
@@ -22,6 +24,9 @@ public class BattleUIManager : MonoBehaviour
     [SerializeField] private Transform weaponSlotsParent;
     [SerializeField] private GameObject weaponTabPrefab;
     [SerializeField] private GameObject weaponSlotPrefab;
+
+    [Header("Items Menu")]
+    [SerializeField] private Transform itemSlotsParent;
 
     [Header("Health Bars")]
     [SerializeField] private HealthBar playerHealthBar;
@@ -47,6 +52,12 @@ public class BattleUIManager : MonoBehaviour
 
     private UIState attackMenuState;
 
+    private List<ItemSlotUI> itemSlotUIList = new List<ItemSlotUI>();
+    private ItemSlotUI currentlySelectedItemSlot;
+    private int currentSelectedItemIndex = -1;
+    private bool isItemsMenuOpen = false;
+    private UIState itemsMenuState;
+
     private void Awake()
     {
         if (Instance == null)
@@ -69,9 +80,15 @@ public class BattleUIManager : MonoBehaviour
             attackMenuBackground.SetActive(false);
         }
 
+        if (itensMenuBackground != null)
+        {
+            itensMenuBackground.SetActive(false);
+        }
+
         InitializeMainMenuButtons();
         InitializeWeaponTabs();
         FindOrCreateWeaponSlots();
+        FindOrCreateItemSlots();
         DisableHealthBars();
     }
 
@@ -156,7 +173,7 @@ public class BattleUIManager : MonoBehaviour
 
     private void Update()
     {
-        if (isMainMenuOpen && !isAttackMenuOpen)
+        if (isMainMenuOpen && !isAttackMenuOpen && !isItemsMenuOpen)
         {
             HandleMainMenuNavigation();
         }
@@ -164,6 +181,10 @@ public class BattleUIManager : MonoBehaviour
         {
             HandleWeaponTabNavigation();
             HandleWeaponListNavigation();
+        }
+        else if (isItemsMenuOpen)
+        {
+            HandleItemsListNavigation();
         }
     }
 
@@ -337,11 +358,8 @@ public class BattleUIManager : MonoBehaviour
 
     private void OnItemsButtonClicked()
     {
-        if (BattleManager.Instance != null)
-        {
-            BattleManager.Instance.EndBattle();
-        }
         CloseMainMenu();
+        OpenItemsMenu();
     }
 
     private void OnRunButtonClicked()
@@ -642,6 +660,208 @@ public class BattleUIManager : MonoBehaviour
             if (BattleManager.Instance != null)
             {
                 BattleManager.Instance.PlayerAttack(selectedWeapon);
+            }
+        }
+    }
+
+    private void FindOrCreateItemSlots()
+    {
+        if (itemSlotsParent != null)
+        {
+            ItemSlotUI[] existingSlots = itemSlotsParent.GetComponentsInChildren<ItemSlotUI>(true);
+            
+            foreach (ItemSlotUI slot in existingSlots)
+            {
+                itemSlotUIList.Add(slot);
+                slot.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    private void OpenItemsMenu()
+    {
+        if (itensMenuBackground != null)
+        {
+            itensMenuBackground.SetActive(true);
+            isItemsMenuOpen = true;
+            RefreshItemsList();
+
+            itemsMenuState = new UIState("ItemsMenu", OnItemsMenuBack);
+            if (UINavigationManager.Instance != null)
+            {
+                UINavigationManager.Instance.PushState(itemsMenuState);
+            }
+        }
+    }
+
+    private void OnItemsMenuBack()
+    {
+        CloseItemsMenu();
+        OpenMainMenu();
+    }
+
+    private void CloseItemsMenu()
+    {
+        if (itensMenuBackground != null)
+        {
+            itensMenuBackground.SetActive(false);
+            isItemsMenuOpen = false;
+            
+            if (currentlySelectedItemSlot != null)
+            {
+                currentlySelectedItemSlot.SetSelected(false);
+                currentlySelectedItemSlot = null;
+            }
+        }
+
+        if (UINavigationManager.Instance != null)
+        {
+            UINavigationManager.Instance.PopState();
+        }
+    }
+
+    private void RefreshItemsList()
+    {
+        List<ItemData> consumableItems = new List<ItemData>();
+        
+        if (InventoryManager.Instance != null)
+        {
+            consumableItems = InventoryManager.Instance.GetAllItemsOfCategory(ItemCategory.Consumable);
+        }
+
+        for (int i = 0; i < itemSlotUIList.Count; i++)
+        {
+            if (i < consumableItems.Count)
+            {
+                int quantity = InventoryManager.Instance.GetItemQuantity(consumableItems[i]);
+                itemSlotUIList[i].Setup(consumableItems[i], quantity);
+            }
+            else
+            {
+                itemSlotUIList[i].Setup(null, 0);
+            }
+        }
+
+        if (currentlySelectedItemSlot != null)
+        {
+            currentlySelectedItemSlot.SetSelected(false);
+            currentlySelectedItemSlot = null;
+        }
+
+        if (consumableItems.Count == 0)
+        {
+            if (emptyMessageItems != null)
+            {
+                emptyMessageItems.SetActive(true);
+            }
+        }
+        else
+        {
+            if (emptyMessageItems != null)
+            {
+                emptyMessageItems.SetActive(false);
+            }
+
+            SelectItemSlotByIndex(0);
+        }
+    }
+
+    private void HandleItemsListNavigation()
+    {
+        List<ItemData> consumableItems = new List<ItemData>();
+        
+        if (InventoryManager.Instance != null)
+        {
+            consumableItems = InventoryManager.Instance.GetAllItemsOfCategory(ItemCategory.Consumable);
+        }
+        
+        if (consumableItems.Count == 0)
+        {
+            return;
+        }
+
+        bool moveDown = Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S);
+        bool moveUp = Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W);
+
+        if (moveDown)
+        {
+            int nextIndex = currentSelectedItemIndex + 1;
+            if (nextIndex >= consumableItems.Count)
+            {
+                nextIndex = 0;
+            }
+            SelectItemSlotByIndex(nextIndex);
+        }
+        else if (moveUp)
+        {
+            int previousIndex = currentSelectedItemIndex - 1;
+            if (previousIndex < 0)
+            {
+                previousIndex = consumableItems.Count - 1;
+            }
+            SelectItemSlotByIndex(previousIndex);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetKeyDown(KeyCode.E))
+        {
+            OnItemSelected();
+        }
+    }
+
+    private void SelectItemSlotByIndex(int index)
+    {
+        List<ItemData> consumableItems = new List<ItemData>();
+        
+        if (InventoryManager.Instance != null)
+        {
+            consumableItems = InventoryManager.Instance.GetAllItemsOfCategory(ItemCategory.Consumable);
+        }
+        
+        if (index < 0 || index >= consumableItems.Count)
+        {
+            return;
+        }
+
+        if (currentlySelectedItemSlot != null)
+        {
+            currentlySelectedItemSlot.SetSelected(false);
+        }
+
+        currentSelectedItemIndex = index;
+        currentlySelectedItemSlot = itemSlotUIList[index];
+        currentlySelectedItemSlot.SetSelected(true);
+    }
+
+    private void OnItemSelected()
+    {
+        if (currentlySelectedItemSlot != null && currentlySelectedItemSlot.GetItemData() != null)
+        {
+            ItemData selectedItem = currentlySelectedItemSlot.GetItemData();
+            
+            if (InventoryManager.Instance == null)
+                return;
+
+            int availableQuantity = InventoryManager.Instance.GetItemQuantity(selectedItem);
+            if (availableQuantity <= 0)
+            {
+                Debug.Log("Você não possui este item!");
+                return;
+            }
+
+            ConsumableData consumable = selectedItem as ConsumableData;
+            if (consumable == null)
+            {
+                Debug.Log("Este item não é consumível!");
+                return;
+            }
+
+            InventoryManager.Instance.ConsumeItem(selectedItem, 1);
+
+            CloseItemsMenu();
+
+            if (BattleManager.Instance != null)
+            {
+                BattleManager.Instance.PlayerUseItem(consumable);
             }
         }
     }

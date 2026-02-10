@@ -10,6 +10,7 @@ public class AttackTimingBar : MonoBehaviour
     private float direction = 1f;
     private bool isActive = false;
     private Action<AttackResult> onComplete;
+    private float speedModifier = 1f;
     
     private void Awake()
     {
@@ -38,12 +39,22 @@ public class AttackTimingBar : MonoBehaviour
         }
     }
     
+    public void SetSpeedModifier(float modifier)
+    {
+        speedModifier = Mathf.Clamp(modifier, 0.1f, 2f);
+    }
+    
+    public void ResetSpeedModifier()
+    {
+        speedModifier = 1f;
+    }
+    
     private void Update()
     {
         if (!isActive || currentWeapon == null)
             return;
         
-        currentPosition += direction * currentWeapon.markerSpeed * Time.deltaTime;
+        currentPosition += direction * currentWeapon.markerSpeed * speedModifier * Time.deltaTime;
         
         if (currentPosition >= 1f)
         {
@@ -77,6 +88,8 @@ public class AttackTimingBar : MonoBehaviour
         {
             AttackTimingUI.Instance.Hide();
         }
+        
+        ResetSpeedModifier();
         
         onComplete?.Invoke(result);
     }
