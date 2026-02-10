@@ -12,6 +12,10 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject battleArena;
     [SerializeField] private MeshRenderer battleEnemyRenderer;
     [SerializeField] private BattleEnemyEffects battleEnemyEffects;
+    
+    [Header("Timing System")]
+    [SerializeField] private AttackTimingBar attackTimingBar;
+    [SerializeField] private AttackTimingUI attackTimingUI;
 
     [Header("Enemy Data")]
     [SerializeField] private EnemyData currentEnemyData;
@@ -102,9 +106,26 @@ public class BattleManager : MonoBehaviour
             BattleUIManager.Instance.HideAllMenus();
         }
 
-        yield return new WaitForSeconds(TURN_DELAY);
+        AttackResult result = AttackResult.Miss;
+        bool timingComplete = false;
 
-        int damage = weapon.GetEffectiveDamage(currentEnemyData.category);
+        if (AttackTimingBar.Instance != null)
+        {
+            AttackTimingBar.Instance.StartTiming(weapon, (res) =>
+            {
+                result = res;
+                timingComplete = true;
+            });
+        }
+        else
+        {
+            result = AttackResult.Hit;
+            timingComplete = true;
+        }
+
+        yield return new WaitUntil(() => timingComplete);
+
+        int damage = weapon.GetDamageByResult(result, currentEnemyData.category);
         currentEnemyHealth = Mathf.Max(0, currentEnemyHealth - damage);
 
         if (battleEnemyEffects != null)
@@ -112,7 +133,9 @@ public class BattleManager : MonoBehaviour
             battleEnemyEffects.PlayHitEffects();
         }
 
-        Debug.Log($"Player atacou com {weapon.itemName} causando {damage} de dano!");
+        string resultText = result == AttackResult.Critical ? "CRÍTICO!" : 
+                           result == AttackResult.Hit ? "acertou" : "ERROU!";
+        Debug.Log($"Player {resultText} com {weapon.itemName} causando {damage} de dano!");
 
         if (BattleUIManager.Instance != null)
         {

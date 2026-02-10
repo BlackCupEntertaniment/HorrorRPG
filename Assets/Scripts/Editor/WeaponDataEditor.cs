@@ -16,8 +16,15 @@ public class WeaponDataEditor : Editor
     private SerializedProperty effectivenessMultiplierProp;
     private SerializedProperty ammoTypeProp;
     
+    private SerializedProperty markerSpeedProp;
+    private SerializedProperty criticalZoneCenterProp;
+    private SerializedProperty criticalZoneWidthProp;
+    private SerializedProperty hitZoneWidthProp;
+    private SerializedProperty criticalMultiplierProp;
+    
     private bool showDamagePreview = true;
     private bool showValidation = true;
+    private bool showTimingBarPreview = true;
 
     private void OnEnable()
     {
@@ -32,6 +39,12 @@ public class WeaponDataEditor : Editor
         effectiveAgainstProp = serializedObject.FindProperty("effectiveAgainst");
         effectivenessMultiplierProp = serializedObject.FindProperty("effectivenessMultiplier");
         ammoTypeProp = serializedObject.FindProperty("ammoType");
+        
+        markerSpeedProp = serializedObject.FindProperty("markerSpeed");
+        criticalZoneCenterProp = serializedObject.FindProperty("criticalZoneCenter");
+        criticalZoneWidthProp = serializedObject.FindProperty("criticalZoneWidth");
+        hitZoneWidthProp = serializedObject.FindProperty("hitZoneWidth");
+        criticalMultiplierProp = serializedObject.FindProperty("criticalMultiplier");
     }
 
     public override void OnInspectorGUI()
@@ -53,10 +66,16 @@ public class WeaponDataEditor : Editor
         DrawWeaponStatsSection();
         
         EditorGUILayout.Space(10);
+        DrawTimingBarSection();
+        
+        EditorGUILayout.Space(10);
         DrawValidationSection(weapon);
         
         EditorGUILayout.Space(10);
         DrawDamagePreviewSection(weapon);
+        
+        EditorGUILayout.Space(10);
+        DrawTimingBarPreviewSection(weapon);
         
         EditorGUILayout.Space(10);
         DrawTestSection(weapon);
@@ -111,6 +130,20 @@ public class WeaponDataEditor : Editor
             EditorGUILayout.PropertyField(effectivenessMultiplierProp);
             GUI.enabled = true;
         }
+        
+        EditorGUI.indentLevel--;
+    }
+
+    private void DrawTimingBarSection()
+    {
+        EditorGUILayout.LabelField("Timing Bar Settings", EditorStyles.boldLabel);
+        EditorGUI.indentLevel++;
+        
+        EditorGUILayout.PropertyField(markerSpeedProp);
+        EditorGUILayout.PropertyField(criticalZoneCenterProp);
+        EditorGUILayout.PropertyField(criticalZoneWidthProp);
+        EditorGUILayout.PropertyField(hitZoneWidthProp);
+        EditorGUILayout.PropertyField(criticalMultiplierProp);
         
         EditorGUI.indentLevel--;
     }
@@ -179,6 +212,77 @@ public class WeaponDataEditor : Editor
         DrawDamageRow("Zombie", weapon.GetEffectiveDamage(EnemyType.Zombie), weapon.effectiveAgainst == EnemyType.Zombie);
         
         EditorGUI.indentLevel--;
+    }
+    
+    private void DrawTimingBarPreviewSection(WeaponData weapon)
+    {
+        showTimingBarPreview = EditorGUILayout.Foldout(showTimingBarPreview, "Timing Bar Preview", true, EditorStyles.foldoutHeader);
+        
+        if (!showTimingBarPreview) return;
+        
+        EditorGUI.indentLevel++;
+        
+        EditorGUILayout.Space(5);
+        DrawTimingBarVisual(weapon);
+        
+        EditorGUILayout.Space(10);
+        EditorGUILayout.HelpBox(
+            $"Velocidade do Marcador: {weapon.markerSpeed:F1} unidades/segundo\n" +
+            $"Zona de Acerto: {weapon.hitZoneWidth * 100f:F0}% da barra (centrada)\n" +
+            $"Zona Crítica: {weapon.criticalZoneWidth * 100f:F1}% na posição {weapon.criticalZoneCenter * 100f:F0}%\n" +
+            $"Multiplicador Crítico: {weapon.criticalMultiplier:F1}x",
+            MessageType.Info
+        );
+        
+        EditorGUI.indentLevel--;
+    }
+    
+    private void DrawTimingBarVisual(WeaponData weapon)
+    {
+        Rect previewRect = GUILayoutUtility.GetRect(0, 60);
+        previewRect.x += 20;
+        previewRect.width -= 40;
+        previewRect.y += 10;
+        previewRect.height = 40;
+        
+        float hitMin = 0.5f - (weapon.hitZoneWidth / 2f);
+        float hitMax = 0.5f + (weapon.hitZoneWidth / 2f);
+        float critMin = weapon.criticalZoneCenter - (weapon.criticalZoneWidth / 2f);
+        float critMax = weapon.criticalZoneCenter + (weapon.criticalZoneWidth / 2f);
+        
+        float totalWidth = previewRect.width;
+        
+        DrawZone(previewRect, 0f, hitMin, Color.black, "MISS");
+        DrawZone(previewRect, hitMin, critMin, Color.white, "HIT");
+        DrawZone(previewRect, critMin, critMax, new Color(0.3f, 0.3f, 0.3f), "CRIT");
+        DrawZone(previewRect, critMax, hitMax, Color.white, "HIT");
+        DrawZone(previewRect, hitMax, 1f, Color.black, "MISS");
+        
+        Rect borderRect = new Rect(previewRect.x, previewRect.y, totalWidth, previewRect.height);
+        EditorGUI.DrawRect(new Rect(borderRect.x - 1, borderRect.y - 1, borderRect.width + 2, 1), Color.gray);
+        EditorGUI.DrawRect(new Rect(borderRect.x - 1, borderRect.y + borderRect.height, borderRect.width + 2, 1), Color.gray);
+        EditorGUI.DrawRect(new Rect(borderRect.x - 1, borderRect.y - 1, 1, borderRect.height + 2), Color.gray);
+        EditorGUI.DrawRect(new Rect(borderRect.x + borderRect.width, borderRect.y - 1, 1, borderRect.height + 2), Color.gray);
+    }
+    
+    private void DrawZone(Rect container, float startNorm, float endNorm, Color color, string label)
+    {
+        float totalWidth = container.width;
+        float startX = container.x + (startNorm * totalWidth);
+        float width = (endNorm - startNorm) * totalWidth;
+        
+        Rect zoneRect = new Rect(startX, container.y, width, container.height);
+        EditorGUI.DrawRect(zoneRect, color);
+        
+        GUIStyle labelStyle = new GUIStyle(GUI.skin.label);
+        labelStyle.alignment = TextAnchor.MiddleCenter;
+        labelStyle.fontSize = 9;
+        labelStyle.normal.textColor = color == Color.white ? Color.black : Color.white;
+        
+        if (width > 40)
+        {
+            GUI.Label(zoneRect, label, labelStyle);
+        }
     }
 
     private void DrawDamageRow(string enemyType, int damage, bool isEffective)

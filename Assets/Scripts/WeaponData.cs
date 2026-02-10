@@ -8,6 +8,13 @@ public enum EnemyType
     Zombie
 }
 
+public enum AttackResult
+{
+    Miss,
+    Hit,
+    Critical
+}
+
 [CreateAssetMenu(fileName = "New Weapon", menuName = "Inventory/Weapon")]
 public class WeaponData : ItemData
 {
@@ -18,6 +25,23 @@ public class WeaponData : ItemData
     
     [Header("Ammo System")]
     public ItemData ammoType;
+    
+    [Header("Timing Bar Settings")]
+    [Range(0.5f, 5f)]
+    public float markerSpeed = 2f;
+    
+    [Header("Hit Zones (valores de 0 a 1)")]
+    [Range(0f, 1f)]
+    public float criticalZoneCenter = 0.5f;
+    
+    [Range(0.01f, 0.2f)]
+    public float criticalZoneWidth = 0.05f;
+    
+    [Range(0.1f, 0.5f)]
+    public float hitZoneWidth = 0.4f;
+    
+    [Range(1f, 3f)]
+    public float criticalMultiplier = 1.5f;
     
     public bool requiresAmmo => ammoType != null;
     public bool IsDefaultWeapon => !requiresAmmo;
@@ -37,5 +61,43 @@ public class WeaponData : ItemData
             return true;
         
         return inventory.HasItem(ammoType, 1);
+    }
+    
+    public AttackResult EvaluateTimingPosition(float normalizedPosition)
+    {
+        float criticalMin = criticalZoneCenter - (criticalZoneWidth / 2f);
+        float criticalMax = criticalZoneCenter + (criticalZoneWidth / 2f);
+        
+        if (normalizedPosition >= criticalMin && normalizedPosition <= criticalMax)
+        {
+            return AttackResult.Critical;
+        }
+        
+        float hitMin = 0.5f - (hitZoneWidth / 2f);
+        float hitMax = 0.5f + (hitZoneWidth / 2f);
+        
+        if (normalizedPosition >= hitMin && normalizedPosition <= hitMax)
+        {
+            return AttackResult.Hit;
+        }
+        
+        return AttackResult.Miss;
+    }
+    
+    public int GetDamageByResult(AttackResult result, EnemyType targetType)
+    {
+        int baseDmg = GetEffectiveDamage(targetType);
+        
+        switch (result)
+        {
+            case AttackResult.Critical:
+                return Mathf.RoundToInt(baseDmg * criticalMultiplier);
+            case AttackResult.Hit:
+                return baseDmg;
+            case AttackResult.Miss:
+                return 0;
+            default:
+                return baseDmg;
+        }
     }
 }
