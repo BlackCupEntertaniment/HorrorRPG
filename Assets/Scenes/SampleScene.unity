@@ -3055,6 +3055,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1980696564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1980696560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d659cebb3a118a4dbc6790492a0b3e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 1980696563}
 --- !u!1 &1984041111
 GameObject:
   m_ObjectHideFlags: 0
@@ -3721,9 +3734,25 @@ PrefabInstance:
       propertyPath: attackTimingUI
       value: 
       objectReference: {fileID: 1808106274}
-    - target: {fileID: 6401325530556489250, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
+    - target: {fileID: 4723024182714401279, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
+      propertyPath: enemyDeathDelay
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4723024182714401279, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
+      propertyPath: enemyAnimationController
+      value: 
+      objectReference: {fileID: 1980696564}
+    - target: {fileID: 5246596984539413271, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 5331893142587484079, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6401325530556489250, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7160091889277290292, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
       propertyPath: m_LocalScale.x
@@ -3783,6 +3812,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5331893142587484079, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1980696563}
+    - targetCorrespondingSourceObject: {fileID: 5331893142587484079, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1980696564}
   m_SourcePrefab: {fileID: 100100000, guid: 21746372221c06d43807cc49cf9cdf43, type: 3}
 --- !u!1001 &5967250479373206478
 PrefabInstance:

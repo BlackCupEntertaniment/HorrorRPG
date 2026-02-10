@@ -12,6 +12,7 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private GameObject battleArena;
     [SerializeField] private MeshRenderer battleEnemyRenderer;
     [SerializeField] private BattleEnemyEffects battleEnemyEffects;
+    [SerializeField] private EnemyAnimationController enemyAnimationController;
     
     [Header("Timing System")]
     [SerializeField] private AttackTimingBar attackTimingBar;
@@ -19,6 +20,10 @@ public class BattleManager : MonoBehaviour
 
     [Header("Enemy Data")]
     [SerializeField] private EnemyData currentEnemyData;
+
+    [Header("Battle Delays")]
+    [SerializeField] private float battleStartDelay = 1f;
+    [SerializeField] private float enemyDeathDelay = 1f;
 
     private bool isInBattle = false;
     private bool isProcessingTurn = false;
@@ -70,6 +75,11 @@ public class BattleManager : MonoBehaviour
             return;
         }
 
+        StartCoroutine(StartBattleSequence(sourceEnemyRenderer, enemyData));
+    }
+
+    private IEnumerator StartBattleSequence(MeshRenderer sourceEnemyRenderer, EnemyData enemyData)
+    {
         currentEnemyData = enemyData;
         isInBattle = true;
         currentEnemyHealth = currentEnemyData.maxHealth;
@@ -80,9 +90,20 @@ public class BattleManager : MonoBehaviour
 
         PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
 
+        if (enemyAnimationController != null)
+        {
+            enemyAnimationController.PlayStartAnimation();
+        }
+
         if (BattleUIManager.Instance != null)
         {
             BattleUIManager.Instance.InitializeBattle();
+        }
+
+        yield return new WaitForSeconds(battleStartDelay);
+
+        if (BattleUIManager.Instance != null)
+        {
             BattleUIManager.Instance.OpenMainMenu();
         }
 
@@ -144,8 +165,13 @@ public class BattleManager : MonoBehaviour
 
         if (currentEnemyHealth <= 0)
         {
+            if (enemyAnimationController != null)
+            {
+                enemyAnimationController.PlayDeadAnimation();
+            }
+
             Debug.Log("Inimigo derrotado!");
-            yield return new WaitForSeconds(TURN_DELAY);
+            yield return new WaitForSeconds(enemyDeathDelay);
             EndBattle();
             yield break;
         }
