@@ -157,7 +157,7 @@ public class BattleManager : MonoBehaviour
         int damage = weapon.GetDamageByResult(result, currentEnemyData.category);
         currentEnemyHealth = Mathf.Max(0, currentEnemyHealth - damage);
 
-        if (battleEnemyEffects != null)
+        if (battleEnemyEffects != null && result != AttackResult.Miss)
         {
             battleEnemyEffects.PlayHitEffects();
         }
