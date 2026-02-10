@@ -18,6 +18,9 @@ public class BattleManager : MonoBehaviour
     [SerializeField] private AttackTimingBar attackTimingBar;
     [SerializeField] private AttackTimingUI attackTimingUI;
 
+    [Header("Transition Effects")]
+    [SerializeField] private BattleTransitionEffects transitionEffects;
+
     [Header("Enemy Data")]
     [SerializeField] private EnemyData currentEnemyData;
 
@@ -86,6 +89,13 @@ public class BattleManager : MonoBehaviour
 
         battleEnemyRenderer.sharedMaterials = sourceEnemyRenderer.sharedMaterials;
 
+        bool transitionComplete = false;
+        if (transitionEffects != null)
+        {
+            transitionEffects.PlayBattleStartEffects(() => transitionComplete = true);
+            yield return new WaitUntil(() => transitionComplete);
+        }
+
         battleArena.SetActive(true);
 
         PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
@@ -99,8 +109,6 @@ public class BattleManager : MonoBehaviour
         {
             BattleUIManager.Instance.InitializeBattle();
         }
-
-        yield return new WaitForSeconds(battleStartDelay);
 
         if (BattleUIManager.Instance != null)
         {
@@ -172,6 +180,14 @@ public class BattleManager : MonoBehaviour
 
             Debug.Log("Inimigo derrotado!");
             yield return new WaitForSeconds(enemyDeathDelay);
+            
+            bool transitionComplete = false;
+            if (transitionEffects != null)
+            {
+                transitionEffects.PlayBattleEndEffects(() => transitionComplete = true);
+                yield return new WaitUntil(() => transitionComplete);
+            }
+            
             EndBattle();
             yield break;
         }
