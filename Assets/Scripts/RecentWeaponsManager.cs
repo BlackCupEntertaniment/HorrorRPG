@@ -5,6 +5,9 @@ public class RecentWeaponsManager : MonoBehaviour
 {
     public static RecentWeaponsManager Instance { get; private set; }
 
+    [Header("Database")]
+    [SerializeField] private WeaponDatabase weaponDatabase;
+
     private const string RECENT_WEAPONS_KEY = "RecentWeapons";
     private const int MAX_RECENT_WEAPONS = 9;
 
@@ -47,9 +50,15 @@ public class RecentWeaponsManager : MonoBehaviour
     {
         List<WeaponData> weapons = new List<WeaponData>();
         
+        if (weaponDatabase == null)
+        {
+            Debug.LogWarning("RecentWeaponsManager: WeaponDatabase não está atribuído!");
+            return weapons;
+        }
+        
         foreach (string weaponID in recentWeaponIDs)
         {
-            WeaponData weapon = Resources.Load<WeaponData>($"Weapons/{weaponID}");
+            WeaponData weapon = weaponDatabase.GetWeaponByName(weaponID);
             if (weapon != null)
             {
                 weapons.Add(weapon);
