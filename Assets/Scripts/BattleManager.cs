@@ -89,6 +89,8 @@ public class BattleManager : MonoBehaviour
 
         battleEnemyRenderer.sharedMaterials = sourceEnemyRenderer.sharedMaterials;
 
+        PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
+
         bool transitionComplete = false;
         if (transitionEffects != null)
         {
@@ -97,8 +99,6 @@ public class BattleManager : MonoBehaviour
         }
 
         battleArena.SetActive(true);
-
-        PlayerControlManager.Instance.LockControl(CONTROL_LOCK_ID);
 
         if (enemyAnimationController != null)
         {
