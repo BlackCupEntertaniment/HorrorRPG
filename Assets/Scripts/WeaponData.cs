@@ -73,10 +73,14 @@ public class WeaponData : ItemData
             return AttackResult.Critical;
         }
         
-        float hitMin = 0.5f - (hitZoneWidth / 2f);
-        float hitMax = 0.5f + (hitZoneWidth / 2f);
+        float hitZoneLeftMin = Mathf.Max(0f, criticalMin - hitZoneWidth);
+        float hitZoneLeftMax = criticalMin;
         
-        if (normalizedPosition >= hitMin && normalizedPosition <= hitMax)
+        float hitZoneRightMin = criticalMax;
+        float hitZoneRightMax = Mathf.Min(1f, criticalMax + hitZoneWidth);
+        
+        if ((normalizedPosition >= hitZoneLeftMin && normalizedPosition < hitZoneLeftMax) ||
+            (normalizedPosition > hitZoneRightMin && normalizedPosition <= hitZoneRightMax))
         {
             return AttackResult.Hit;
         }

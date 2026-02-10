@@ -92,16 +92,20 @@ public class AttackTimingUI : MonoBehaviour
         
         float totalWidth = barBackground.rect.width;
         
-        float hitMin = 0.5f - (weapon.hitZoneWidth / 2f);
-        float hitMax = 0.5f + (weapon.hitZoneWidth / 2f);
         float critMin = weapon.criticalZoneCenter - (weapon.criticalZoneWidth / 2f);
         float critMax = weapon.criticalZoneCenter + (weapon.criticalZoneWidth / 2f);
         
-        SetZoneSize(missZoneLeft, 0f, hitMin, totalWidth);
-        SetZoneSize(hitZoneLeft, hitMin, critMin, totalWidth);
+        float hitLeftMin = Mathf.Max(0f, critMin - weapon.hitZoneWidth);
+        float hitLeftMax = critMin;
+        
+        float hitRightMin = critMax;
+        float hitRightMax = Mathf.Min(1f, critMax + weapon.hitZoneWidth);
+        
+        SetZoneSize(missZoneLeft, 0f, hitLeftMin, totalWidth);
+        SetZoneSize(hitZoneLeft, hitLeftMin, hitLeftMax, totalWidth);
         SetZoneSize(criticalZone, critMin, critMax, totalWidth);
-        SetZoneSize(hitZoneRight, critMax, hitMax, totalWidth);
-        SetZoneSize(missZoneRight, hitMax, 1f, totalWidth);
+        SetZoneSize(hitZoneRight, hitRightMin, hitRightMax, totalWidth);
+        SetZoneSize(missZoneRight, hitRightMax, 1f, totalWidth);
         
         LayoutRebuilder.ForceRebuildLayoutImmediate(barBackground);
     }

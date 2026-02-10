@@ -228,7 +228,7 @@ public class WeaponDataEditor : Editor
         EditorGUILayout.Space(10);
         EditorGUILayout.HelpBox(
             $"Velocidade do Marcador: {weapon.markerSpeed:F1} unidades/segundo\n" +
-            $"Zona de Acerto: {weapon.hitZoneWidth * 100f:F0}% da barra (centrada)\n" +
+            $"Zona de Acerto: {weapon.hitZoneWidth * 100f:F0}% de cada lado da crítica\n" +
             $"Zona Crítica: {weapon.criticalZoneWidth * 100f:F1}% na posição {weapon.criticalZoneCenter * 100f:F0}%\n" +
             $"Multiplicador Crítico: {weapon.criticalMultiplier:F1}x",
             MessageType.Info
@@ -245,18 +245,22 @@ public class WeaponDataEditor : Editor
         previewRect.y += 10;
         previewRect.height = 40;
         
-        float hitMin = 0.5f - (weapon.hitZoneWidth / 2f);
-        float hitMax = 0.5f + (weapon.hitZoneWidth / 2f);
         float critMin = weapon.criticalZoneCenter - (weapon.criticalZoneWidth / 2f);
         float critMax = weapon.criticalZoneCenter + (weapon.criticalZoneWidth / 2f);
         
+        float hitLeftMin = Mathf.Max(0f, critMin - weapon.hitZoneWidth);
+        float hitLeftMax = critMin;
+        
+        float hitRightMin = critMax;
+        float hitRightMax = Mathf.Min(1f, critMax + weapon.hitZoneWidth);
+        
         float totalWidth = previewRect.width;
         
-        DrawZone(previewRect, 0f, hitMin, Color.black, "MISS");
-        DrawZone(previewRect, hitMin, critMin, Color.white, "HIT");
+        DrawZone(previewRect, 0f, hitLeftMin, Color.black, "MISS");
+        DrawZone(previewRect, hitLeftMin, hitLeftMax, Color.white, "HIT");
         DrawZone(previewRect, critMin, critMax, new Color(0.3f, 0.3f, 0.3f), "CRIT");
-        DrawZone(previewRect, critMax, hitMax, Color.white, "HIT");
-        DrawZone(previewRect, hitMax, 1f, Color.black, "MISS");
+        DrawZone(previewRect, hitRightMin, hitRightMax, Color.white, "HIT");
+        DrawZone(previewRect, hitRightMax, 1f, Color.black, "MISS");
         
         Rect borderRect = new Rect(previewRect.x, previewRect.y, totalWidth, previewRect.height);
         EditorGUI.DrawRect(new Rect(borderRect.x - 1, borderRect.y - 1, borderRect.width + 2, 1), Color.gray);
