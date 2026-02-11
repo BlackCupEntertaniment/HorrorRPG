@@ -374,6 +374,11 @@ public class BattleManager : MonoBehaviour
                 break;
         }
 
+        if (BattlePlayerEffects.Instance != null)
+        {
+            BattlePlayerEffects.Instance.PlayItemUseEffects();
+        }
+
         if (BattleUIManager.Instance != null)
         {
             BattleUIManager.Instance.UpdateHealthBars();

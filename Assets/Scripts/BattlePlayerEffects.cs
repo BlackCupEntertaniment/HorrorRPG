@@ -29,6 +29,9 @@ public class BattlePlayerEffects : MonoBehaviour
     [SerializeField] private float shakeDuration = 0.2f;
     [SerializeField] private float shakeIntensity = 0.15f;
 
+    [Header("Item Use Effects")]
+    [SerializeField] private ParticleSystem itemParticle;
+
     private Coroutine damageFlashCoroutine;
 
     private void Awake()
@@ -88,6 +91,16 @@ public class BattlePlayerEffects : MonoBehaviour
             screenShake.Shake(shakeDuration, shakeIntensity);
             screenShake.ShakeRotation(shakeDuration, shakeIntensity/2);
         }
+    }
+
+    public void PlayItemUseEffects()
+    {
+        if (itemParticle != null)
+        {
+            itemParticle.Play();
+        }
+        
+        PlayDamageFlash(DefenseType.Partial);
     }
 
     private IEnumerator DamageFlashCoroutine(Color flashColor)
