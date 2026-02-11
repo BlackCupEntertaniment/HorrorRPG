@@ -54,16 +54,7 @@ public class DoorInteraction : MonoBehaviour, IInteractable
 
     public bool CanInteract()
     {
-        if (isOpening) return false;
-
-        if (!isLocked) return true;
-
-        if (InventoryManager.Instance != null && requiredKey != null)
-        {
-            return InventoryManager.Instance.HasItem(requiredKey, 1);
-        }
-
-        return false;
+        return !isOpening;
     }
 
     private void UnlockDoor()
