@@ -11,6 +11,7 @@ public class SpriteSheetAnimator : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private int startFrame = 0;
     [SerializeField] private int endFrame = 15;
+    [SerializeField] private bool playOnAwake = true;
     
     private Renderer meshRenderer;
     private MaterialPropertyBlock propertyBlock;
@@ -29,6 +30,8 @@ public class SpriteSheetAnimator : MonoBehaviour
         currentFrame = startFrame;
         
         InitializePropertyBlock();
+        
+        isPlaying = playOnAwake;
     }
 
     private void InitializePropertyBlock()
