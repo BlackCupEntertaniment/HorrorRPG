@@ -23,7 +23,7 @@ MonoBehaviour:
   effectivenessMultiplier: 2
   ammoType: {fileID: 0}
   markerSpeed: 2
-  criticalZoneCenter: 0.75
-  criticalZoneWidth: 0.1
-  hitZoneWidth: 0.15
+  criticalZoneCenter: 0.672
+  criticalZoneWidth: 0.033
+  hitZoneWidth: 0.1
   criticalMultiplier: 1.5
