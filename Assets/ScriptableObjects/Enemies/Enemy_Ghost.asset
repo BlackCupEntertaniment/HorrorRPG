@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyName: Ghost
   maxHealth: 40
-  baseDamage: 12
+  baseDamage: 50
   category: 2
   availableAttacks:
   - {fileID: 11400000, guid: c615bc7fb5e7243489b1bd315b745aa5, type: 2}

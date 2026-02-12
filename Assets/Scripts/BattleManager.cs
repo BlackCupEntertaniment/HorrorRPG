@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
@@ -211,9 +212,7 @@ public class BattleManager : MonoBehaviour
 
         if (PlayerStats.Instance != null && !PlayerStats.Instance.IsAlive())
         {
-            Debug.Log("Player derrotado!");
-            yield return new WaitForSeconds(TURN_DELAY);
-            EndBattle();
+            yield return StartCoroutine(ProcessPlayerDeath());
             yield break;
         }
 
@@ -306,6 +305,22 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    private IEnumerator ProcessPlayerDeath()
+    {
+        Debug.Log("Player derrotado! Reiniciando cena...");
+        
+        bool transitionComplete = false;
+        if (transitionEffects != null)
+        {
+            transitionEffects.PlayBattleStartEffects(() => transitionComplete = true);
+            yield return new WaitUntil(() => transitionComplete);
+        }
+
+        yield return new WaitForSeconds(0.35f);
+        
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public void EndBattle()
     {
         if (!isInBattle)
@@ -390,9 +405,7 @@ public class BattleManager : MonoBehaviour
 
         if (PlayerStats.Instance != null && !PlayerStats.Instance.IsAlive())
         {
-            Debug.Log("Player derrotado!");
-            yield return new WaitForSeconds(TURN_DELAY);
-            EndBattle();
+            yield return StartCoroutine(ProcessPlayerDeath());
             yield break;
         }
 

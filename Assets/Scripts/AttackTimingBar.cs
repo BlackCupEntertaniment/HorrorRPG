@@ -5,12 +5,15 @@ public class AttackTimingBar : MonoBehaviour
 {
     public static AttackTimingBar Instance { get; private set; }
     
+    private const float INPUT_DELAY = 0.15f;
+    
     private WeaponData currentWeapon;
     private float currentPosition = 0f;
     private float direction = 1f;
     private bool isActive = false;
     private Action<AttackResult> onComplete;
     private float speedModifier = 1f;
+    private float inputDelayTimer = 0f;
     
     private void Awake()
     {
@@ -31,6 +34,7 @@ public class AttackTimingBar : MonoBehaviour
         currentPosition = 0f;
         direction = 1f;
         isActive = true;
+        inputDelayTimer = INPUT_DELAY;
         
         if (AttackTimingUI.Instance != null)
         {
@@ -54,6 +58,11 @@ public class AttackTimingBar : MonoBehaviour
         if (!isActive || currentWeapon == null)
             return;
         
+        if (inputDelayTimer > 0f)
+        {
+            inputDelayTimer -= Time.deltaTime;
+        }
+        
         currentPosition += direction * currentWeapon.markerSpeed * speedModifier * Time.deltaTime;
         
         if (currentPosition >= 1f)
@@ -72,7 +81,7 @@ public class AttackTimingBar : MonoBehaviour
             AttackTimingUI.Instance.UpdateMarkerPosition(currentPosition);
         }
         
-        if (Input.GetKeyDown(KeyCode.E))
+        if (inputDelayTimer <= 0f && Input.GetKeyDown(KeyCode.E))
         {
             EvaluateAndComplete();
         }
