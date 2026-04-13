@@ -25,6 +25,9 @@ public class InventoryManager : MonoBehaviour
     [Header("Prefab")]
     [SerializeField] private GameObject itemSlotPrefab;
 
+    [Header("Default Items")]
+    [SerializeField] private WeaponData defaultWeapon;
+
     [Header("Settings")]
     [SerializeField] private int maxSlots = 9;
     [SerializeField] private float itemAddDelay = 0.25f;
@@ -77,6 +80,14 @@ public class InventoryManager : MonoBehaviour
 
         InitializeTabs();
         FindOrCreateSlots();
+    }
+
+    private void Start()
+    {
+        if (defaultWeapon != null && !HasItem(defaultWeapon, 1))
+        {
+            AddItem(defaultWeapon, 1);
+        }
     }
 
     private void FindOrCreateSlots()
